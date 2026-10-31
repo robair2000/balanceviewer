@@ -4,11 +4,16 @@ One page, two panels: your KuCoin spot balances (including sub-accounts) and you
 Ethereum wallet (the address MetaMask holds), each valued in USD, plus a combined
 total.
 
+Two front-ends, one data layer:
+
 ```
-python server.py            # http://127.0.0.1:8787
+streamlit run streamlit_app.py   # Streamlit UI  → http://localhost:8501
+python server.py                 # plain HTML    → http://127.0.0.1:8787
 ```
 
-No `pip install`, no Node, no build step — standard library only. Python 3.9+.
+`server.py` is the data layer for both (stdlib only, no dependencies). The
+Streamlit path needs `pip install -r requirements.txt`; the plain server needs
+nothing at all.
 
 ## Setup
 
@@ -57,6 +62,24 @@ card footer — no silent zeros.
   Infura endpoint.
 - **Reach it from your phone?** `python server.py --host 0.0.0.0`, then use your
   LAN IP. Only do this on a network you trust — there is no login.
+
+## Deploy on Streamlit Community Cloud
+
+**The app is public once deployed**, so the password gate is not optional.
+
+1. Push this repo to GitHub (private works).
+2. share.streamlit.io → **New app** → pick the repo, branch `main`, main file
+   `streamlit_app.py`.
+3. **Advanced settings → Secrets** → paste the block from
+   `.streamlit/secrets.toml.example`, filled in, with a long `APP_PASSWORD`.
+4. Deploy.
+
+**KuCoin IP whitelist:** if your API key is locked to your home IP, Cloud calls
+fail with `401` because its egress IPs are not yours. Remove the whitelist and
+rely on General-only permissions (read-only, no Trade/Transfer) instead.
+
+`secrets.toml` is git-ignored and must never be committed. On Cloud the values
+live only in the Streamlit dashboard.
 
 ## Security notes
 

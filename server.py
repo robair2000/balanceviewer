@@ -450,10 +450,12 @@ def kucoin_source() -> dict:
         if pending:
             PRICES.warm(pending.keys())
             unseen = sum((PRICES.value(c, a)[1] or 0) for c, a in pending.items())
-            notes.append(
-                f"Funding wallet not included: ${unseen:,.2f} across {len(pending)} "
-                "asset(s). Set KUCOIN_INCLUDE_FUNDING=1 to add it."
-            )
+            if unseen >= 0.01:
+                assets = f"{len(pending)} asset" + ("s" if len(pending) > 1 else "")
+                notes.append(
+                    f"Funding wallet not included: ${unseen:,.2f} across {assets}. "
+                    "Set KUCOIN_INCLUDE_FUNDING=1 to add it."
+                )
 
     subaccounts: list[dict] = []
     sub_mode = ""
