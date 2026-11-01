@@ -2,3 +2,8 @@
 __pycache__/
 *.pyc
 .streamlit/secrets.toml
+wallpaper.png
+.wallpaper_state.json
+background.*
+assets/background.*
+*.bak
