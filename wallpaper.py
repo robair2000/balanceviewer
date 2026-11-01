@@ -251,10 +251,11 @@ def render_plan(img: Image.Image, d: ImageDraw.ImageDraw, plan: dict,
     """Draw the saxoBot panel beside the balance panel."""
     cur = plan["current"]
     rows = cur.get("rows") or []
+    reason = str(cur.get("reason") or "")
     stale = str(cur.get("month", "")) != datetime.now().strftime("%Y-%m")
 
     pad_w = 300
-    pad_h = 74 + 20 * max(len(rows), 1) + 10
+    pad_h = 74 + 20 * max(len(rows), 1) + (12 if reason else 0) + 10
 
     bx0, by0, _bx1, _by1 = balance_box
     gap = 18
@@ -293,7 +294,12 @@ def render_plan(img: Image.Image, d: ImageDraw.ImageDraw, plan: dict,
     label = str(cur.get("label") or cur.get("month") or "")
     d.text((px - 1, py), label, font=f_month, fill=(255, 255, 255))
 
-    py += 30
+    py += 24
+    if reason:
+        d.text((px, py), fit_text(d, reason, f_stamp, pad_w - 40),
+               font=f_stamp, fill=(128, 141, 161))
+        py += 13
+    py += 4
     d.line([(px, py), (x1 - 20, py)], fill=(255, 255, 255, 24), width=1)
     py += 9
 
@@ -423,7 +429,7 @@ def update(apply: bool, force: bool, bg_path: Path | None = None, corner: str = 
     plan_sig = ""
     if plan:
         c = plan.get("current") or {}
-        plan_sig = f"|{c.get('month')}|{c.get('asof')}|" + ",".join(
+        plan_sig = f"|{c.get('month')}|{c.get('asof')}|{c.get('reason')}|" + ",".join(
             f"{r['ticker']}:{r['shares']}" for r in (c.get("rows") or []))
     digest = hashlib.sha256(
         f"{summary}|{corner}|{bg_sig}|{hidden}{plan_sig}".encode()).hexdigest()
