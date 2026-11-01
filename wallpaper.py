@@ -251,6 +251,7 @@ def render_plan(img: Image.Image, d: ImageDraw.ImageDraw, plan: dict,
     """Draw the saxoBot panel beside the balance panel."""
     cur = plan["current"]
     rows = cur.get("rows") or []
+    stale = str(cur.get("month", "")) != datetime.now().strftime("%Y-%m")
 
     pad_w = 300
     pad_h = 74 + 20 * max(len(rows), 1) + 10
@@ -280,12 +281,13 @@ def render_plan(img: Image.Image, d: ImageDraw.ImageDraw, plan: dict,
     px = x0 + 20
     py = y0 + 17
 
-    d.ellipse([px, py + 2, px + 5, py + 7], fill=PURPLE)
+    d.ellipse([px, py + 2, px + 5, py + 7],
+              fill=(245, 158, 11) if stale else PURPLE)
     draw_tracked(d, (px + 11, py - 1), "SAXO PLAN", f_label, (190, 200, 220),
                  tracking=2.0)
-    asof = str(cur.get("asof", ""))[-5:]
-    d.text((x1 - 20 - d.textlength(asof, font=f_stamp), py), asof,
-           font=f_stamp, fill=(150, 162, 184))
+    tag = "STALE" if stale else str(cur.get("asof", ""))[-5:]
+    d.text((x1 - 20 - d.textlength(tag, font=f_stamp), py), tag,
+           font=f_stamp, fill=(245, 158, 11) if stale else (150, 162, 184))
 
     py += 15
     label = str(cur.get("label") or cur.get("month") or "")
