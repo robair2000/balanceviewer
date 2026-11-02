@@ -610,7 +610,8 @@ def render_watchlist(img: Image.Image, d: ImageDraw.ImageDraw,
     for r in rows:
         dd = (r["price"] / r["high"] - 1) * 100
         pe = r.get("pe")
-        buy = pe is not None and pe_max and pe <= pe_max and dd <= -dd_min
+        buy = (pe is not None and pe_max and 4 <= pe <= pe_max
+               and dd <= -dd_min)
         near = (pe is not None and pe_max and pe <= pe_max * 1.10
                 and dd <= -(dd_min - 5))
 

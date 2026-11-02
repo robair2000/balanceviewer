@@ -49,6 +49,34 @@ def risk_free() -> float:
         return 4.9
 
 
+def median_pe(t, info) -> float | None:
+    """Median historical P/E from annual EPS and the price at each year-end."""
+    fin = t.financials
+    if fin is None or "Basic EPS" not in fin.index:
+        return None
+    eps = fin.loc["Basic EPS"].dropna().sort_index()
+    if len(eps) < 3:
+        return None
+    h = t.history(period="6y", auto_adjust=True)["Close"].dropna()
+    if not len(h):
+        return None
+    pes = []
+    for d, e in eps.items():
+        if not e or e <= 0:
+            continue
+        px = h[h.index <= d]
+        if not len(px):
+            continue
+        pe = float(px.iloc[-1]) / float(e)
+        if pe > 300:                  # pence vs pounds
+            pe /= 100
+        if 0 < pe < 300:
+            pes.append(pe)
+    if not pes:
+        return None
+    return float(pd.Series(pes).median())
+
+
 def check(sym: str) -> dict | None:
     t = yf.Ticker(sym)
     fin, bs, cf = t.financials, t.balance_sheet, t.cashflow
@@ -109,10 +137,12 @@ def check(sym: str) -> dict | None:
     high = float(h.max())
     dd = float(h.iloc[-1]) / high - 1
     ey = 100.0 / float(fpe)
+    med = median_pe(t, info)
+    rel = (float(fpe) / med) if med and med > 0 else None
     return {"ticker": sym, "name": info.get("shortName") or sym,
             "sector": info.get("sector") or "?",
             "pe": float(fpe), "ey": ey, "dd": dd * 100,
-            "roe": roe, "cagr": cagr}
+            "med": med, "rel": rel, "roe": roe, "cagr": cagr}
 
 
 def main() -> int:
@@ -131,13 +161,15 @@ def main() -> int:
             print(f"  skip {sym}: {str(exc)[:40]}", file=sys.stderr)
             r = None
         if r:
-            r["buy"] = r["pe"] <= pe_max and r["dd"] <= -DRAWDOWN_MIN
+            r["buy"] = (r["pe"] <= pe_max and r["dd"] <= -DRAWDOWN_MIN
+                        and r["pe"] >= 4)
             r["near"] = (r["pe"] <= pe_max * 1.10
                          and r["dd"] <= -(DRAWDOWN_MIN - 5))
             rows.append(r)
         print(f"{i}/{len(tickers)}", end="\r", flush=True)
 
-    rows.sort(key=lambda r: (r["buy"], r["near"], r["ey"]), reverse=True)
+    rows.sort(key=lambda r: (0 if r["buy"] else 1,
+                             r["rel"] if r["rel"] is not None else 99))
     keep: list[dict] = []
     per_sector: dict[str, int] = {}
     for r in rows:
@@ -157,8 +189,9 @@ def main() -> int:
              f"{sum(r['buy'] for r in rows)} at BUY, kept {len(keep)}"]
     for r in keep:
         flag = "BUY" if r["buy"] else ("near" if r["near"] else "")
-        lines.append(f"  {r['ticker']:10s} {r['name'][:28]:28s} "
-                     f"{r['pe']:5.1f}x  dd {r['dd']:+5.0f}%  {flag}")
+        rel = f"{r['rel']:.2f}x own median" if r.get("rel") else "-"
+        lines.append(f"  {r['ticker']:10s} {r['name'][:26]:26s} "
+                     f"{r['pe']:5.1f}x  dd {r['dd']:+5.0f}%  {rel:16s} {flag}")
     LOG.write_text(("\n".join(lines) + "\n"), encoding="utf-8")
 
     print("\n" + "\n".join(lines))
