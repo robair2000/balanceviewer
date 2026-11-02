@@ -25,6 +25,7 @@ def main() -> int:
     ap.add_argument("--ebit-low", type=float, help="EBIT margin guide, low end %")
     ap.add_argument("--ebit-high", type=float, help="EBIT margin guide, high end %")
     ap.add_argument("--guidance", choices=["raised", "intact", "cut"])
+    ap.add_argument("--next", help="next report date, YYYY-MM-DD")
     ap.add_argument("--asof", default=str(date.today()))
     ap.add_argument("--source", default="")
     args = ap.parse_args()
@@ -39,6 +40,8 @@ def main() -> int:
                        ("guidance", args.guidance)):
         if value is not None:
             data[key] = value
+    if args.next:
+        data["next_report"] = args.next
     if args.asof:
         data["asof"] = args.asof
     if args.source:

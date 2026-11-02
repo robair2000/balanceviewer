@@ -18,7 +18,7 @@ import json
 import os
 import sys
 import time
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 
 from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageFont, ImageStat
@@ -454,7 +454,7 @@ def render_thesis(img: Image.Image, d: ImageDraw.ImageDraw, m: dict,
     if not rows:
         return top_y
 
-    pad_h = 56 + 19 * len(rows) + 13
+    pad_h = 56 + 19 * len(rows) + 13 + (12 if m.get("next_report") else 0)
     x1, y0 = right_x, top_y
     x0 = x1 - pad_w
     y1 = y0 + pad_h
@@ -489,6 +489,18 @@ def render_thesis(img: Image.Image, d: ImageDraw.ImageDraw, m: dict,
 
     d.text((px, py), "exit: orders <+20% · margin <46% · cut", font=f_small,
            fill=(110, 122, 142))
+
+    nxt = str(m.get("next_report") or "")[:10]
+    if nxt:
+        due = date.today().isoformat() > nxt and str(m.get("asof") or "") < nxt
+        try:
+            label = datetime.strptime(nxt, "%Y-%m-%d").strftime("%d %b")
+        except ValueError:
+            label = nxt
+        py += 13
+        d.text((px, py),
+               ("REPORT OUT - update numbers" if due else f"next report {label}"),
+               font=f_small, fill=(245, 158, 11) if due else (110, 122, 142))
     return y1
 
 
