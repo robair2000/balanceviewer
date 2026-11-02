@@ -335,6 +335,7 @@ def read_positions() -> list[dict]:
                         "name": str(p.get("name", p["ticker"])),
                         "shares": float(p["shares"]),
                         "entry": float(p["entry"]),
+                        "cost": float(p["cost"]) if p.get("cost") else None,
                         "note": str(p.get("note", ""))})
         except (KeyError, TypeError, ValueError):
             continue
@@ -396,7 +397,8 @@ def render_positions(img: Image.Image, d: ImageDraw.ImageDraw,
     for p in positions:
         price = prices.get(p["ticker"])
         value = price * p["shares"] if price else None
-        pct = (price / p["entry"] - 1) if price and p["entry"] else None
+        basis = p.get("cost") or (p["entry"] * p["shares"] if p["entry"] else None)
+        pct = (value / basis - 1) if value and basis else None
         fill = GREEN if (pct or 0) >= 0 else (239, 107, 107)
 
         name = f"{p['ticker'].split('.')[0]} {p['name']}"
