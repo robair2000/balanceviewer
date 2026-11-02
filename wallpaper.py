@@ -39,6 +39,8 @@ PLAN_CACHE = Path(os.getenv("SAXO_PLAN_CACHE",
 POSITIONS = Path(os.getenv("SAXO_POSITIONS_FILE", str(ROOT / "positions.json")))
 # thesis checklist for the main holding
 METRICS = Path(os.getenv("SAXO_METRICS_FILE", str(ROOT / "basler_metrics.json")))
+# quality watchlist: buy trigger = N% below the 52-week high
+WATCHLIST = Path(os.getenv("SAXO_WATCHLIST_FILE", str(ROOT / "watchlist.json")))
 
 SCREEN_W, SCREEN_H = 1920, 1080
 FONT_BOLD = "C:/Windows/Fonts/segoeuib.ttf"
@@ -524,12 +526,107 @@ def render_thesis(img: Image.Image, d: ImageDraw.ImageDraw, m: dict,
     return y1
 
 
+def read_watchlist() -> tuple[float, list[dict]]:
+    try:
+        data = json.loads(WATCHLIST.read_text(encoding="utf-8"))
+    except Exception:                                  # noqa: BLE001
+        return 20.0, []
+    trig = float(data.get("drawdown_trigger", 20.0))
+    out = []
+    for n in data.get("names", []):
+        try:
+            out.append({"ticker": str(n["ticker"]),
+                        "name": str(n.get("name", n["ticker"]))})
+        except (KeyError, TypeError):
+            continue
+    return trig, out
+
+
+def watchlist_stats(names: list[dict]) -> list[dict]:
+    """price, 52-week high and the drawdown trigger for each name."""
+    if not names:
+        return []
+    tickers = [n["ticker"] for n in names]
+    try:
+        import pandas as pd
+        import yfinance as yf
+
+        d = yf.download(tickers, period="1y", progress=False,
+                        auto_adjust=True)["Close"]
+        if isinstance(d, pd.Series):
+            d = d.to_frame(tickers[0])
+        d = d.ffill()
+    except Exception:                                  # noqa: BLE001
+        return []
+
+    out = []
+    for n in names:
+        t = n["ticker"]
+        if t not in d.columns or not d[t].notna().any():
+            continue
+        s = d[t].dropna()
+        out.append({**n, "price": float(s.iloc[-1]),
+                    "high": float(s.max()),
+                    "low": float(s.min())})
+    return out
+
+
+def render_watchlist(img: Image.Image, d: ImageDraw.ImageDraw,
+                     rows: list[dict], trigger: float, right_x: int,
+                     top_y: int, pad_w: int = 300) -> int:
+    """Quality names and how far each is from a mechanical buy level."""
+    if not rows:
+        return top_y
+    pad_h = 56 + 18 * len(rows)
+    x1, y0 = right_x, top_y
+    x0 = x1 - pad_w
+    y1 = y0 + pad_h
+
+    frosted_panel(img, (x0, y0, x1, y1), 16)
+    d.rounded_rectangle([x0, y0, x1, y1], radius=16,
+                        outline=(255, 255, 255, 28), width=1)
+
+    f_label = ImageFont.truetype(FONT_SEMI, 9)
+    f_row = ImageFont.truetype(FONT_SEMI, 11)
+    f_val = ImageFont.truetype(FONT_BOLD, 10)
+    f_small = ImageFont.truetype(FONT_REG, 9)
+
+    px, py = x0 + 20, y0 + 15
+    d.ellipse([px, py + 2, px + 5, py + 7], fill=(56, 189, 248))
+    draw_tracked(d, (px + 11, py - 1), "WATCHLIST", f_label, (190, 200, 220),
+                 tracking=2.0)
+    tag = f"buy at -{trigger:.0f}% from high"
+    d.text((x1 - 20 - d.textlength(tag, font=f_small), py), tag,
+           font=f_small, fill=(150, 162, 184))
+
+    py += 18
+    for r in rows:
+        dd = r["price"] / r["high"] - 1
+        need = dd + trigger / 100.0          # how much further to fall
+        name = f"{r['ticker'].split('.')[0]} {r['name']}"
+        d.text((px, py), fit_text(d, name, f_row, pad_w - 125),
+               font=f_row, fill=(200, 209, 224))
+
+        if need <= 0:
+            txt, fill = "BUY", GREEN
+        else:
+            txt, fill = f"-{need:.0%} more", (245, 158, 11) if need < 0.10 \
+                else (120, 132, 152)
+        d.text((x1 - 20 - d.textlength(txt, font=f_val), py), txt,
+               font=f_val, fill=fill)
+        py += 18
+
+    return y1
+
+
 def render(data: dict, bg_path: Path | None = None, corner: str = "tr",
            hidden: bool = False, plan: dict | None = None,
            positions: list[dict] | None = None,
            prices: dict[str, float] | None = None,
            metrics: dict | None = None,
-           fx: float = 1.16) -> Image.Image:
+           fx: float = 1.16,
+           watch: list[dict] | None = None,
+           watch_trigger: float = 20.0) -> Image.Image:
     rows = build_rows(data, hidden)
     pad_w = 336
     pad_h = 88 + 20 * len(rows)
@@ -592,6 +689,10 @@ def render(data: dict, bg_path: Path | None = None, corner: str = "tr",
     else:
         bottom = y1 + 16
     render_thesis(img, d, metrics or {}, x1, bottom + 16)
+    watch_bottom = bottom + 16 + (56 + 19 * 3 + 25) if metrics else bottom + 16
+    if watch:
+        render_watchlist(img, d, watch, watch_trigger, x1,
+                         watch_bottom + 16)
 
     return Image.alpha_composite(img, overlay).convert("RGB")
 
@@ -632,6 +733,8 @@ def update(apply: bool, force: bool, bg_path: Path | None = None, corner: str = 
     prices = last_prices([p["ticker"] for p in positions]) if positions else {}
     metrics = read_metrics()
     fx = usd_per_eur() if any(p.get("ccy") == "USD" for p in positions) else 1.16
+    watch_trigger, watch_names = read_watchlist()
+    watch = watchlist_stats(watch_names)
     total = float(data.get("total_usd") or 0)
     summary = f"{money(total)} | " + " ".join(
         f"{s.get('label')}={money(s.get('total_usd'))}" for s in data.get("sources", []))
@@ -644,7 +747,7 @@ def update(apply: bool, force: bool, bg_path: Path | None = None, corner: str = 
             return summary + f"  [skipped: {', '.join(failed)} unavailable, kept previous]"
 
     img = render(data, bg_path, corner, hidden, plan, positions, prices, metrics,
-                 fx)
+                 fx, watch, watch_trigger)
     img.save(OUT, "PNG")
 
     bg_sig = f"{bg_path}:{bg_path.stat().st_mtime_ns}" if bg_path and bg_path.exists() else "none"
@@ -658,8 +761,10 @@ def update(apply: bool, force: bool, bg_path: Path | None = None, corner: str = 
         for p in positions)
     met_sig = "|".join(f"{k}={v}" for k, v in sorted((metrics or {}).items())
                        if not isinstance(v, dict))
+    watch_sig = "|".join(f"{r['ticker']}@{r['price']:.2f}" for r in (watch or []))
     digest = hashlib.sha256(
-        f"{summary}|{corner}|{bg_sig}|{hidden}{plan_sig}{pos_sig}{met_sig}".encode()).hexdigest()
+        f"{summary}|{corner}|{bg_sig}|{hidden}{plan_sig}{pos_sig}{met_sig}"
+        f"{watch_sig}".encode()).hexdigest()
 
     previous_digest = state.get("digest")
     previous_total = state.get("total")

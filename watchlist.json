@@ -1,0 +1,14 @@
+{
+ "drawdown_trigger": 20.0,
+ "names": [
+  {"ticker": "V",         "name": "Visa"},
+  {"ticker": "ASML.AS",   "name": "ASML"},
+  {"ticker": "ITX.MC",    "name": "Inditex"},
+  {"ticker": "MSFT",      "name": "Microsoft"},
+  {"ticker": "COST",      "name": "Costco"},
+  {"ticker": "ATCO-A.ST", "name": "Atlas Copco"},
+  {"ticker": "AZN.L",     "name": "AstraZeneca"},
+  {"ticker": "SU.PA",     "name": "Schneider"},
+  {"ticker": "SAP.DE",    "name": "SAP"}
+ ]
+}
