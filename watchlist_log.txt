@@ -1,13 +1,13 @@
-2026-11-03 refresh: 23 passed quality, 3 at BUY, kept 12
+2026-11-03 refresh: 135 passed quality, 28 at BUY, kept 12
+  DNP.WA     DNP C.XWAR PLN                 2.1x  dd   -15%  BUY
+  UHS        Universal Health Services, I   7.5x  dd   -26%  BUY
+  FSLR       First Solar, Inc.              7.9x  dd   -43%  BUY
+  PRX.AS     PROSUS                         8.3x  dd   -45%  BUY
   ADBE       Adobe Inc.                     9.2x  dd   -30%  BUY
+  DECK       Deckers Outdoor Corporation   10.4x  dd   -30%  BUY
+  AAF.L      AIRTEL AFRICA PLC ORD USD0.5  10.4x  dd   -36%  BUY
+  FRES.L     FRESNILLO PLC ORD USD0.50     10.8x  dd   -47%  BUY
   DG.PA      VINCI                         11.1x  dd   -21%  BUY
-  NFLX       Netflix, Inc.                 16.5x  dd   -46%  BUY
-  CRM        Salesforce, Inc.              14.1x  dd   -14%  near
-  AZN.L      ASTRAZENECA PLC ORD SHS $0.2  16.3x  dd   -11%  near
-  META       Meta Platforms, Inc.          17.1x  dd   -22%  near
-  GOOGL      Alphabet Inc.                 18.4x  dd   -31%  near
-  SU.PA      SCHNEIDER ELECTRIC SE         19.1x  dd   -24%  
-  UCB.BR     UCB                           19.2x  dd    -1%  
-  MSFT       Microsoft Corporation         21.0x  dd    -7%  
-  ASM.AS     ASM International N.V.        21.5x  dd   -32%  
-  ITX.MC     INDUSTRIA DE DISE...O TEXTIL  24.3x  dd    -4%  
+  APO        Apollo Global Management, In  11.2x  dd   -21%  BUY
+  APP        Applovin Corporation          11.4x  dd   -69%  BUY
+  RBREW.CO   Royal UNIBREW A/S             12.0x  dd   -29%  BUY

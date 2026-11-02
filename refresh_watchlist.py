@@ -97,6 +97,9 @@ def check(sym: str) -> dict | None:
         return None
 
     info = t.info
+    cap = info.get("marketCap") or 0
+    if cap < 5e9:
+        return None
     fpe = info.get("forwardPE")
     price = info.get("currentPrice")
     h = t.history(period="1y", auto_adjust=True)["Close"].dropna()
@@ -107,6 +110,7 @@ def check(sym: str) -> dict | None:
     dd = float(h.iloc[-1]) / high - 1
     ey = 100.0 / float(fpe)
     return {"ticker": sym, "name": info.get("shortName") or sym,
+            "sector": info.get("sector") or "?",
             "pe": float(fpe), "ey": ey, "dd": dd * 100,
             "roe": roe, "cagr": cagr}
 
@@ -134,7 +138,15 @@ def main() -> int:
         print(f"{i}/{len(tickers)}", end="\r", flush=True)
 
     rows.sort(key=lambda r: (r["buy"], r["near"], r["ey"]), reverse=True)
-    keep = rows[:MAX_NAMES]
+    keep: list[dict] = []
+    per_sector: dict[str, int] = {}
+    for r in rows:
+        if per_sector.get(r["sector"], 0) >= 2:
+            continue
+        keep.append(r)
+        per_sector[r["sector"]] = per_sector.get(r["sector"], 0) + 1
+        if len(keep) >= MAX_NAMES:
+            break
 
     rules = {"risk_free": round(rf, 2), "pe_max": round(pe_max, 1),
              "drawdown_min": DRAWDOWN_MIN, "asof": str(date.today())}
