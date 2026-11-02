@@ -1,0 +1,13 @@
+2026-11-03 refresh: 23 passed quality, 3 at BUY, kept 12
+  ADBE       Adobe Inc.                     9.2x  dd   -30%  BUY
+  DG.PA      VINCI                         11.1x  dd   -21%  BUY
+  NFLX       Netflix, Inc.                 16.5x  dd   -46%  BUY
+  CRM        Salesforce, Inc.              14.1x  dd   -14%  near
+  AZN.L      ASTRAZENECA PLC ORD SHS $0.2  16.3x  dd   -11%  near
+  META       Meta Platforms, Inc.          17.1x  dd   -22%  near
+  GOOGL      Alphabet Inc.                 18.4x  dd   -31%  near
+  SU.PA      SCHNEIDER ELECTRIC SE         19.1x  dd   -24%  
+  UCB.BR     UCB                           19.2x  dd    -1%  
+  MSFT       Microsoft Corporation         21.0x  dd    -7%  
+  ASM.AS     ASM International N.V.        21.5x  dd   -32%  
+  ITX.MC     INDUSTRIA DE DISE...O TEXTIL  24.3x  dd    -4%  

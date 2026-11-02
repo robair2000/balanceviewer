@@ -526,20 +526,23 @@ def render_thesis(img: Image.Image, d: ImageDraw.ImageDraw, m: dict,
     return y1
 
 
-def read_watchlist() -> tuple[float, list[dict]]:
+def read_watchlist() -> tuple[dict, list[dict]]:
     try:
         data = json.loads(WATCHLIST.read_text(encoding="utf-8"))
     except Exception:                                  # noqa: BLE001
-        return 20.0, []
-    trig = float(data.get("drawdown_trigger", 20.0))
+        return {}, []
+    rules = data.get("rules") or {}
+    if not rules:                          # older schema
+        rules = {"drawdown_min": float(data.get("drawdown_trigger", 20.0))}
     out = []
     for n in data.get("names", []):
         try:
             out.append({"ticker": str(n["ticker"]),
-                        "name": str(n.get("name", n["ticker"]))})
+                        "name": str(n.get("name", n["ticker"])),
+                        "pe": n.get("pe")})
         except (KeyError, TypeError):
             continue
-    return trig, out
+    return rules, out
 
 
 def watchlist_stats(names: list[dict]) -> list[dict]:
@@ -572,11 +575,14 @@ def watchlist_stats(names: list[dict]) -> list[dict]:
 
 
 def render_watchlist(img: Image.Image, d: ImageDraw.ImageDraw,
-                     rows: list[dict], trigger: float, right_x: int,
+                     rows: list[dict], rules: dict, right_x: int,
                      top_y: int, pad_w: int = 300) -> int:
-    """Quality names and how far each is from a mechanical buy level."""
+    """Quality names, their forward P/E, and how far they are from a buy."""
     if not rows:
         return top_y
+    dd_min = float(rules.get("drawdown_min", 20.0))
+    pe_max = rules.get("pe_max")
+
     pad_h = 56 + 18 * len(rows)
     x1, y0 = right_x, top_y
     x0 = x1 - pad_w
@@ -595,23 +601,34 @@ def render_watchlist(img: Image.Image, d: ImageDraw.ImageDraw,
     d.ellipse([px, py + 2, px + 5, py + 7], fill=(56, 189, 248))
     draw_tracked(d, (px + 11, py - 1), "WATCHLIST", f_label, (190, 200, 220),
                  tracking=2.0)
-    tag = f"buy at -{trigger:.0f}% from high"
+    tag = (f"P/E<{pe_max:.0f} · -{dd_min:.0f}% high" if pe_max
+           else f"buy at -{dd_min:.0f}% from high")
     d.text((x1 - 20 - d.textlength(tag, font=f_small), py), tag,
            font=f_small, fill=(150, 162, 184))
 
     py += 18
     for r in rows:
-        dd = r["price"] / r["high"] - 1
-        need = dd + trigger / 100.0          # how much further to fall
+        dd = (r["price"] / r["high"] - 1) * 100
+        pe = r.get("pe")
+        buy = pe is not None and pe_max and pe <= pe_max and dd <= -dd_min
+        near = (pe is not None and pe_max and pe <= pe_max * 1.10
+                and dd <= -(dd_min - 5))
+
         name = f"{r['ticker'].split('.')[0]} {r['name']}"
-        d.text((px, py), fit_text(d, name, f_row, pad_w - 125),
+        d.text((px, py), fit_text(d, name, f_row, pad_w - 130),
                font=f_row, fill=(200, 209, 224))
 
-        if need <= 0:
+        left = f"{pe:.0f}x" if pe else "-"
+        d.text((x1 - 105, py), left, font=f_val, fill=(180, 190, 210))
+        d.text((x1 - 75, py), f"{dd:+.0f}%", font=f_val,
+               fill=GREEN if dd > -10 else (245, 158, 11) if dd > -dd_min
+               else (239, 107, 107))
+        if buy:
             txt, fill = "BUY", GREEN
+        elif near:
+            txt, fill = "near", (245, 158, 11)
         else:
-            txt, fill = f"-{need:.0%} more", (245, 158, 11) if need < 0.10 \
-                else (120, 132, 152)
+            txt, fill = "", (120, 132, 152)
         d.text((x1 - 20 - d.textlength(txt, font=f_val), py), txt,
                font=f_val, fill=fill)
         py += 18
@@ -673,7 +690,7 @@ def render(data: dict, bg_path: Path | None = None, corner: str = "tr",
            metrics: dict | None = None,
            fx: float = 1.16,
            watch: list[dict] | None = None,
-           watch_trigger: float = 20.0) -> Image.Image:
+           watch_rules: dict | None = None) -> Image.Image:
     rows = build_rows(data, hidden)
     pad_w = 336
     pad_h = 88 + 20 * len(rows)
@@ -738,7 +755,7 @@ def render(data: dict, bg_path: Path | None = None, corner: str = "tr",
     render_thesis(img, d, metrics or {}, x1, bottom + 16)
     watch_bottom = bottom + 16 + (56 + 19 * 3 + 25) if metrics else bottom + 16
     if watch:
-        render_watchlist(img, d, watch, watch_trigger, x1,
+        render_watchlist(img, d, watch, watch_rules or {}, x1,
                          watch_bottom + 16)
 
     render_checklist(img, d)
@@ -782,7 +799,7 @@ def update(apply: bool, force: bool, bg_path: Path | None = None, corner: str = 
     prices = last_prices([p["ticker"] for p in positions]) if positions else {}
     metrics = read_metrics()
     fx = usd_per_eur() if any(p.get("ccy") == "USD" for p in positions) else 1.16
-    watch_trigger, watch_names = read_watchlist()
+    watch_rules, watch_names = read_watchlist()
     watch = watchlist_stats(watch_names)
     total = float(data.get("total_usd") or 0)
     summary = f"{money(total)} | " + " ".join(
@@ -796,7 +813,7 @@ def update(apply: bool, force: bool, bg_path: Path | None = None, corner: str = 
             return summary + f"  [skipped: {', '.join(failed)} unavailable, kept previous]"
 
     img = render(data, bg_path, corner, hidden, plan, positions, prices, metrics,
-                 fx, watch, watch_trigger)
+                 fx, watch, watch_rules)
     img.save(OUT, "PNG")
 
     bg_sig = f"{bg_path}:{bg_path.stat().st_mtime_ns}" if bg_path and bg_path.exists() else "none"
