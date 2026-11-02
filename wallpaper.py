@@ -619,6 +619,53 @@ def render_watchlist(img: Image.Image, d: ImageDraw.ImageDraw,
     return y1
 
 
+QUESTIONS = [
+    "How does it make money?",
+    "What does it earn in a normal year?",
+    "Is growth real, or a base effect?",
+    "Are margins rising or falling?",
+    "How much debt, and when is it due?",
+    "Is the share count growing?",
+    "Multiple vs its own history?",
+    "Cheap for a temporary or permanent reason?",
+    "What would prove me wrong?",
+    "At what price do I sell?",
+]
+
+
+def render_checklist(img: Image.Image, d: ImageDraw.ImageDraw) -> None:
+    """The ten questions, bottom-left, so they're always in view."""
+    pad_w, row_h = 430, 17
+    pad_h = 40 + row_h * len(QUESTIONS) + 18
+    x0 = 56
+    y1 = SCREEN_H - 72
+    y0 = y1 - pad_h
+    x1 = x0 + pad_w
+
+    frosted_panel(img, (x0, y0, x1, y1), 16)
+    d.rounded_rectangle([x0, y0, x1, y1], radius=16,
+                        outline=(255, 255, 255, 28), width=1)
+
+    f_label = ImageFont.truetype(FONT_SEMI, 9)
+    f_row = ImageFont.truetype(FONT_SEMI, 11)
+    f_num = ImageFont.truetype(FONT_BOLD, 9)
+    f_small = ImageFont.truetype(FONT_REG, 9)
+
+    px, py = x0 + 20, y0 + 15
+    d.ellipse([px, py + 2, px + 5, py + 7], fill=(155, 140, 255))
+    draw_tracked(d, (px + 11, py - 1), "TEN QUESTIONS", f_label,
+                 (190, 200, 220), tracking=2.0)
+
+    py += 18
+    for i, q in enumerate(QUESTIONS, 1):
+        d.text((px, py), f"{i:>2d}", font=f_num, fill=(110, 122, 142))
+        d.text((px + 20, py - 1), q, font=f_row, fill=(200, 209, 224))
+        py += row_h
+
+    d.text((px, py + 1), "any \u2018don't know\u2019 \u2192 too-hard pile",
+           font=f_small, fill=(110, 122, 142))
+
+
 def render(data: dict, bg_path: Path | None = None, corner: str = "tr",
            hidden: bool = False, plan: dict | None = None,
            positions: list[dict] | None = None,
@@ -693,6 +740,8 @@ def render(data: dict, bg_path: Path | None = None, corner: str = "tr",
     if watch:
         render_watchlist(img, d, watch, watch_trigger, x1,
                          watch_bottom + 16)
+
+    render_checklist(img, d)
 
     return Image.alpha_composite(img, overlay).convert("RGB")
 
