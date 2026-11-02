@@ -35,6 +35,8 @@ STATE = ROOT / ".wallpaper_state.json"
 # saxoBot writes its monthly plan here (equitybot/widget.py --text does too)
 PLAN_CACHE = Path(os.getenv("SAXO_PLAN_CACHE",
                             str(ROOT.parent.parent / "equitybot" / "signal_cache.json")))
+# manual stock positions (the ones outside the monthly rotation)
+POSITIONS = Path(os.getenv("SAXO_POSITIONS_FILE", str(ROOT / "positions.json")))
 
 SCREEN_W, SCREEN_H = 1920, 1080
 FONT_BOLD = "C:/Windows/Fonts/segoeuib.ttf"
@@ -318,8 +320,110 @@ def render_plan(img: Image.Image, d: ImageDraw.ImageDraw, plan: dict,
         py += 20
 
 
+def read_positions() -> list[dict]:
+    """Manual positions from positions.json (outside the monthly rotation)."""
+    try:
+        data = json.loads(POSITIONS.read_text(encoding="utf-8"))
+    except Exception:                                  # noqa: BLE001
+        return []
+    out: list[dict] = []
+    for p in data if isinstance(data, list) else []:
+        try:
+            out.append({"ticker": str(p["ticker"]),
+                        "name": str(p.get("name", p["ticker"])),
+                        "shares": float(p["shares"]),
+                        "entry": float(p["entry"]),
+                        "note": str(p.get("note", ""))})
+        except (KeyError, TypeError, ValueError):
+            continue
+    return out
+
+
+def last_prices(tickers: list[str]) -> dict[str, float]:
+    """Latest close for each ticker; {} if the data source is unavailable."""
+    if not tickers:
+        return {}
+    try:
+        import pandas as pd
+        import yfinance as yf
+
+        d = yf.download(tickers, period="5d", progress=False,
+                        auto_adjust=True)["Close"]
+        if isinstance(d, pd.Series):
+            d = d.to_frame(tickers[0])
+        d = d.ffill()
+        out = {}
+        for t in tickers:
+            if t in d.columns and d[t].notna().any():
+                out[t] = float(d[t].dropna().iloc[-1])
+        return out
+    except Exception:                                  # noqa: BLE001
+        return {}
+
+
+def render_positions(img: Image.Image, d: ImageDraw.ImageDraw,
+                     positions: list[dict], prices: dict[str, float],
+                     right_x: int, top_y: int, pad_w: int = 300) -> None:
+    """Holdings with live P&L, stacked under the balance card."""
+    row_h = 36
+    notes = [p["note"] for p in positions if p["note"]]
+    pad_h = 58 + row_h * len(positions) + (13 if notes else 0)
+    x1, y0 = right_x, top_y
+    x0 = x1 - pad_w
+    y1 = y0 + pad_h
+
+    frosted_panel(img, (x0, y0, x1, y1), 16)
+    d.rounded_rectangle([x0, y0, x1, y1], radius=16,
+                        outline=(255, 255, 255, 28), width=1)
+
+    f_label = ImageFont.truetype(FONT_SEMI, 9)
+    f_row = ImageFont.truetype(FONT_SEMI, 12)
+    f_val = ImageFont.truetype(FONT_BOLD, 12)
+    f_small = ImageFont.truetype(FONT_REG, 9)
+    f_pct = ImageFont.truetype(FONT_BOLD, 10)
+
+    px, py = x0 + 20, y0 + 16
+    d.ellipse([px, py + 2, px + 5, py + 7], fill=(245, 158, 11))
+    draw_tracked(d, (px + 11, py - 1), "POSITIONS", f_label, (190, 200, 220),
+                 tracking=2.0)
+    stamp = datetime.now().strftime("%d %b %H:%M")
+    d.text((x1 - 20 - d.textlength(stamp, font=f_small), py), stamp,
+           font=f_small, fill=(150, 162, 184))
+
+    py += 19
+    for p in positions:
+        price = prices.get(p["ticker"])
+        value = price * p["shares"] if price else None
+        pct = (price / p["entry"] - 1) if price and p["entry"] else None
+        fill = GREEN if (pct or 0) >= 0 else (239, 107, 107)
+
+        name = f"{p['ticker'].split('.')[0]} {p['name']}"
+        d.text((px, py - 1), fit_text(d, name, f_row, pad_w - 40 - 70),
+               font=f_row, fill=(230, 236, 246))
+        if value is not None:
+            txt = f"€{value:,.0f}"
+            d.text((x1 - 20 - d.textlength(txt, font=f_val), py - 2), txt,
+                   font=f_val, fill=(255, 255, 255))
+
+        py += 16
+        left = (f"{p['shares']:.0f} sh · {price:.2f}" if price
+                else f"{p['shares']:.0f} sh · no quote")
+        d.text((px, py), left, font=f_small, fill=(140, 152, 174))
+        if pct is not None:
+            txt = f"{pct:+.1%}"
+            d.text((x1 - 20 - d.textlength(txt, font=f_pct), py - 1), txt,
+                   font=f_pct, fill=fill)
+        py += row_h - 16
+
+    if notes:
+        d.text((px, py), fit_text(d, " · ".join(notes), f_small, pad_w - 40),
+               font=f_small, fill=(128, 141, 161))
+
+
 def render(data: dict, bg_path: Path | None = None, corner: str = "tr",
-           hidden: bool = False, plan: dict | None = None) -> Image.Image:
+           hidden: bool = False, plan: dict | None = None,
+           positions: list[dict] | None = None,
+           prices: dict[str, float] | None = None) -> Image.Image:
     rows = build_rows(data, hidden)
     pad_w = 336
     pad_h = 88 + 20 * len(rows)
@@ -376,6 +480,9 @@ def render(data: dict, bg_path: Path | None = None, corner: str = "tr",
     if plan:
         render_plan(img, d, plan, (x0, y0, x1, y1), on_left=corner.endswith("r"))
 
+    if positions:
+        render_positions(img, d, positions, prices or {}, x1, y1 + 16)
+
     return Image.alpha_composite(img, overlay).convert("RGB")
 
 
@@ -411,6 +518,8 @@ def update(apply: bool, force: bool, bg_path: Path | None = None, corner: str = 
 
     data = server.build_portfolio()
     plan = read_plan()
+    positions = read_positions()
+    prices = last_prices([p["ticker"] for p in positions]) if positions else {}
     total = float(data.get("total_usd") or 0)
     summary = f"{money(total)} | " + " ".join(
         f"{s.get('label')}={money(s.get('total_usd'))}" for s in data.get("sources", []))
@@ -422,7 +531,7 @@ def update(apply: bool, force: bool, bg_path: Path | None = None, corner: str = 
         if failed and state.get("digest"):
             return summary + f"  [skipped: {', '.join(failed)} unavailable, kept previous]"
 
-    img = render(data, bg_path, corner, hidden, plan)
+    img = render(data, bg_path, corner, hidden, plan, positions, prices)
     img.save(OUT, "PNG")
 
     bg_sig = f"{bg_path}:{bg_path.stat().st_mtime_ns}" if bg_path and bg_path.exists() else "none"
@@ -431,8 +540,11 @@ def update(apply: bool, force: bool, bg_path: Path | None = None, corner: str = 
         c = plan.get("current") or {}
         plan_sig = f"|{c.get('month')}|{c.get('asof')}|{c.get('reason')}|" + ",".join(
             f"{r['ticker']}:{r['shares']}" for r in (c.get("rows") or []))
+    pos_sig = "|".join(
+        f"{p['ticker']}:{p['shares']:.0f}@{prices.get(p['ticker'], 0):.2f}"
+        for p in positions)
     digest = hashlib.sha256(
-        f"{summary}|{corner}|{bg_sig}|{hidden}{plan_sig}".encode()).hexdigest()
+        f"{summary}|{corner}|{bg_sig}|{hidden}{plan_sig}{pos_sig}".encode()).hexdigest()
 
     previous_digest = state.get("digest")
     previous_total = state.get("total")
