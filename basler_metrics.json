@@ -1,0 +1,13 @@
+{
+ "asof": "2026-10-29",
+ "source": "9M 2026 ad-hoc",
+ "order_growth": 62.0,
+ "gross_margin": 49.0,
+ "ebit_low": 17.5,
+ "ebit_high": 19.5,
+ "guidance": "raised",
+ "limits": {
+  "order_growth_min": 20.0,
+  "gross_margin_min": 46.0
+ }
+}
