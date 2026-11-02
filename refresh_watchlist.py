@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import sys
+import time
 from datetime import date
 from pathlib import Path
 
@@ -60,10 +61,18 @@ def median_pe(t, info) -> float | None:
     h = t.history(period="6y", auto_adjust=True)["Close"].dropna()
     if not len(h):
         return None
+    try:                       # financial-year dates are tz-naive
+        h.index = h.index.tz_localize(None)
+    except (TypeError, AttributeError):
+        pass
     pes = []
     for d, e in eps.items():
         if not e or e <= 0:
             continue
+        try:
+            d = pd.Timestamp(d).tz_localize(None)
+        except (TypeError, ValueError):
+            pass
         px = h[h.index <= d]
         if not len(px):
             continue
@@ -89,7 +98,8 @@ def check(sym: str) -> dict | None:
     f1 = int((ni > 0).sum()) >= 3
 
     yrs = (rev.index[-1] - rev.index[0]).days / 365.25
-    cagr = (rev.iloc[-1] / rev.iloc[0]) ** (1 / yrs) - 1 if yrs > 0 else 0
+    cagr = ((rev.iloc[-1] / rev.iloc[0]) ** (1 / yrs) - 1
+            if yrs > 0 and rev.iloc[0] > 0 else 0)
     f2 = cagr > 0.05
 
     f3 = False
@@ -126,7 +136,7 @@ def check(sym: str) -> dict | None:
 
     info = t.info
     cap = info.get("marketCap") or 0
-    if cap < 5e9:
+    if cap < 2e9:
         return None
     fpe = info.get("forwardPE")
     price = info.get("currentPrice")
@@ -166,6 +176,7 @@ def main() -> int:
             r["near"] = (r["pe"] <= pe_max * 1.10
                          and r["dd"] <= -(DRAWDOWN_MIN - 5))
             rows.append(r)
+        time.sleep(0.15)                 # stay under Yahoo's rate limit
         print(f"{i}/{len(tickers)}", end="\r", flush=True)
 
     rows.sort(key=lambda r: (0 if r["buy"] else 1,

@@ -1,13 +1,1 @@
-2026-11-03 refresh: 135 passed quality, 28 at BUY, kept 12
-  DNP.WA     DNP C.XWAR PLN                 2.1x  dd   -15%  BUY
-  UHS        Universal Health Services, I   7.5x  dd   -26%  BUY
-  FSLR       First Solar, Inc.              7.9x  dd   -43%  BUY
-  PRX.AS     PROSUS                         8.3x  dd   -45%  BUY
-  ADBE       Adobe Inc.                     9.2x  dd   -30%  BUY
-  DECK       Deckers Outdoor Corporation   10.4x  dd   -30%  BUY
-  AAF.L      AIRTEL AFRICA PLC ORD USD0.5  10.4x  dd   -36%  BUY
-  FRES.L     FRESNILLO PLC ORD USD0.50     10.8x  dd   -47%  BUY
-  DG.PA      VINCI                         11.1x  dd   -21%  BUY
-  APO        Apollo Global Management, In  11.2x  dd   -21%  BUY
-  APP        Applovin Corporation          11.4x  dd   -69%  BUY
-  RBREW.CO   Royal UNIBREW A/S             12.0x  dd   -29%  BUY
+2026-11-03 refresh: 0 passed quality, 0 at BUY, kept 0

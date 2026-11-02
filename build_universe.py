@@ -57,6 +57,24 @@ def main() -> int:
         s = str(row["Symbol"]).replace(".", "-").strip()
         syms[s] = str(row["Security"])
 
+    # S&P 400 midcaps
+    mid = fetch("https://en.wikipedia.org/wiki/List_of_S%26P_400_companies")[0]
+    for _, row in mid.iterrows():
+        s = str(row["Symbol"]).replace(".", "-").strip()
+        syms[s] = str(row["Security"])
+
+    # FTSE 250 (London tickers, no suffix on Wikipedia)
+    ft = None
+    for d in fetch("https://en.wikipedia.org/wiki/FTSE_250_Index"):
+        if "Ticker" in d.columns and "Company" in d.columns:
+            ft = d
+            break
+    if ft is not None:
+        for _, row in ft.iterrows():
+            t = str(row["Ticker"]).strip()
+            if t and t != "nan":
+                syms[f"{t}.L"] = str(row["Company"])
+
     st = None
     for d in fetch("https://en.wikipedia.org/wiki/STOXX_Europe_600"):
         if "Ticker" in d.columns and "Main listing" in d.columns:
