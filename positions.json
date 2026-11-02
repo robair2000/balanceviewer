@@ -5,6 +5,16 @@
   "shares": 42,
   "entry": 23.45,
   "cost": 991.35,
+  "ccy": "EUR",
   "note": "9M report 4 Nov"
+ },
+ {
+  "ticker": "TER",
+  "name": "Teradyne",
+  "shares": 8,
+  "entry": 275.0,
+  "cost": 1896.0,
+  "ccy": "USD",
+  "note": "Q4 report 27 Jan"
  }
 ]

@@ -336,6 +336,7 @@ def read_positions() -> list[dict]:
                         "shares": float(p["shares"]),
                         "entry": float(p["entry"]),
                         "cost": float(p["cost"]) if p.get("cost") else None,
+                        "ccy": str(p.get("ccy", "EUR")).upper(),
                         "note": str(p.get("note", ""))})
         except (KeyError, TypeError, ValueError):
             continue
@@ -364,9 +365,23 @@ def last_prices(tickers: list[str]) -> dict[str, float]:
         return {}
 
 
+def usd_per_eur() -> float:
+    """USD per EUR, for positions quoted in dollars. 1.16 if unavailable."""
+    try:
+        import yfinance as yf
+
+        h = yf.download("EURUSD=X", period="5d", progress=False,
+                        auto_adjust=True)["Close"].dropna()
+        return float(h.iloc[-1].iloc[0] if hasattr(h.iloc[-1], "iloc")
+                     else h.iloc[-1])
+    except Exception:                                  # noqa: BLE001
+        return 1.16
+
+
 def render_positions(img: Image.Image, d: ImageDraw.ImageDraw,
                      positions: list[dict], prices: dict[str, float],
-                     right_x: int, top_y: int, pad_w: int = 300) -> int:
+                     right_x: int, top_y: int, pad_w: int = 300,
+                     fx: float = 1.16) -> int:
     """Holdings with live P&L, stacked under the balance card."""
     row_h = 36
     notes = [p["note"] for p in positions if p["note"]]
@@ -396,7 +411,9 @@ def render_positions(img: Image.Image, d: ImageDraw.ImageDraw,
     py += 19
     for p in positions:
         price = prices.get(p["ticker"])
-        value = price * p["shares"] if price else None
+        usd = p.get("ccy") == "USD"
+        value = (price * p["shares"] / fx if usd else price * p["shares"]) \
+            if price else None
         basis = p.get("cost") or (p["entry"] * p["shares"] if p["entry"] else None)
         pct = (value / basis - 1) if value and basis else None
         fill = GREEN if (pct or 0) >= 0 else (239, 107, 107)
@@ -410,7 +427,8 @@ def render_positions(img: Image.Image, d: ImageDraw.ImageDraw,
                    font=f_val, fill=(255, 255, 255))
 
         py += 16
-        left = (f"{p['shares']:.0f} sh · {price:.2f}" if price
+        sign = "$" if usd else ""
+        left = (f"{p['shares']:.0f} sh · {sign}{price:.2f}" if price
                 else f"{p['shares']:.0f} sh · no quote")
         d.text((px, py), left, font=f_small, fill=(140, 152, 174))
         if pct is not None:
@@ -510,7 +528,8 @@ def render(data: dict, bg_path: Path | None = None, corner: str = "tr",
            hidden: bool = False, plan: dict | None = None,
            positions: list[dict] | None = None,
            prices: dict[str, float] | None = None,
-           metrics: dict | None = None) -> Image.Image:
+           metrics: dict | None = None,
+           fx: float = 1.16) -> Image.Image:
     rows = build_rows(data, hidden)
     pad_w = 336
     pad_h = 88 + 20 * len(rows)
@@ -568,7 +587,8 @@ def render(data: dict, bg_path: Path | None = None, corner: str = "tr",
         render_plan(img, d, plan, (x0, y0, x1, y1), on_left=corner.endswith("r"))
 
     if positions:
-        bottom = render_positions(img, d, positions, prices or {}, x1, y1 + 16)
+        bottom = render_positions(img, d, positions, prices or {}, x1, y1 + 16,
+                                  fx=fx)
     else:
         bottom = y1 + 16
     render_thesis(img, d, metrics or {}, x1, bottom + 16)
@@ -611,6 +631,7 @@ def update(apply: bool, force: bool, bg_path: Path | None = None, corner: str = 
     positions = read_positions()
     prices = last_prices([p["ticker"] for p in positions]) if positions else {}
     metrics = read_metrics()
+    fx = usd_per_eur() if any(p.get("ccy") == "USD" for p in positions) else 1.16
     total = float(data.get("total_usd") or 0)
     summary = f"{money(total)} | " + " ".join(
         f"{s.get('label')}={money(s.get('total_usd'))}" for s in data.get("sources", []))
@@ -622,7 +643,8 @@ def update(apply: bool, force: bool, bg_path: Path | None = None, corner: str = 
         if failed and state.get("digest"):
             return summary + f"  [skipped: {', '.join(failed)} unavailable, kept previous]"
 
-    img = render(data, bg_path, corner, hidden, plan, positions, prices, metrics)
+    img = render(data, bg_path, corner, hidden, plan, positions, prices, metrics,
+                 fx)
     img.save(OUT, "PNG")
 
     bg_sig = f"{bg_path}:{bg_path.stat().st_mtime_ns}" if bg_path and bg_path.exists() else "none"
