@@ -43,6 +43,8 @@ METRICS = Path(os.getenv("SAXO_METRICS_FILE", str(ROOT / "basler_metrics.json"))
 WATCHLIST = Path(os.getenv("SAXO_WATCHLIST_FILE", str(ROOT / "watchlist.json")))
 # crypto bottoming screen output
 CRYPTO = Path(os.getenv("SAXO_CRYPTO_FILE", str(ROOT / "crypto_watch.json")))
+# ETF diversifier screen output
+ETFS = Path(os.getenv("SAXO_ETF_FILE", str(ROOT / "etf_watch.json")))
 
 SCREEN_W, SCREEN_H = 1920, 1080
 FONT_BOLD = "C:/Windows/Fonts/segoeuib.ttf"
@@ -740,6 +742,63 @@ def render_crypto(img: Image.Image, d: ImageDraw.ImageDraw, coins: list[dict],
     return y1
 
 
+def read_etfs() -> list[dict]:
+    try:
+        data = json.loads(ETFS.read_text(encoding="utf-8"))
+    except Exception:                                  # noqa: BLE001
+        return []
+    return data.get("etfs", [])[:7]
+
+
+def render_etfs(img: Image.Image, d: ImageDraw.ImageDraw, rows: list[dict],
+                left_x: int, top_y: int, pad_w: int = 430) -> int:
+    """Diversifier candidates: low correlation first."""
+    if not rows:
+        return top_y
+    pad_h = 56 + 18 * len(rows)
+    x0, y0 = left_x, top_y
+    x1 = x0 + pad_w
+    y1 = y0 + pad_h
+
+    frosted_panel(img, (x0, y0, x1, y1), 16)
+    d.rounded_rectangle([x0, y0, x1, y1], radius=16,
+                        outline=(255, 255, 255, 28), width=1)
+
+    f_label = ImageFont.truetype(FONT_SEMI, 9)
+    f_row = ImageFont.truetype(FONT_SEMI, 11)
+    f_val = ImageFont.truetype(FONT_BOLD, 10)
+    f_small = ImageFont.truetype(FONT_REG, 9)
+
+    px, py = x0 + 20, y0 + 15
+    d.ellipse([px, py + 2, px + 5, py + 7], fill=(56, 189, 248))
+    draw_tracked(d, (px + 11, py - 1), "ETF DIVERSIFIERS", f_label,
+                 (190, 200, 220), tracking=2.0)
+    tag = "price · 3y dd · corr · TER"
+    d.text((x1 - 20 - d.textlength(tag, font=f_small), py), tag,
+           font=f_small, fill=(150, 162, 184))
+
+    py += 18
+    for r in rows:
+        d.text((px, py), fit_text(d, str(r["name"]), f_row, pad_w - 200),
+               font=f_row, fill=(200, 209, 224))
+        d.text((x1 - 175, py), f"{float(r['price']):.2f}", font=f_val,
+               fill=(180, 190, 210))
+        d.text((x1 - 128, py), f"{float(r['dd3y']):+.0f}%", font=f_val,
+               fill=(150, 162, 184))
+        corr = float(r["corr"])
+        d.text((x1 - 84, py), f"{corr:.2f}", font=f_val,
+               fill=GREEN if corr < 0.2 else (245, 158, 11) if corr < 0.4
+               else (239, 107, 107))
+        ter = r.get("ter")
+        d.text((x1 - 20 - d.textlength(f"{ter:.2f}%" if ter else "-",
+                                       font=f_val), py),
+               f"{ter:.2f}%" if ter else "-", font=f_val,
+               fill=(150, 162, 184))
+        py += 18
+
+    return y1
+
+
 def render(data: dict, bg_path: Path | None = None, corner: str = "tr",
            hidden: bool = False, plan: dict | None = None,
            positions: list[dict] | None = None,
@@ -748,7 +807,8 @@ def render(data: dict, bg_path: Path | None = None, corner: str = "tr",
            fx: float = 1.16,
            watch: list[dict] | None = None,
            watch_rules: dict | None = None,
-           crypto: list[dict] | None = None) -> Image.Image:
+           crypto: list[dict] | None = None,
+           etfs: list[dict] | None = None) -> Image.Image:
     rows = build_rows(data, hidden)
     pad_w = 336
     pad_h = 88 + 20 * len(rows)
@@ -818,8 +878,12 @@ def render(data: dict, bg_path: Path | None = None, corner: str = "tr",
 
     check_x1 = x0 - 18 - 300 - 18
     check_bottom = render_checklist(img, d, check_x1, y0)
+    crypto_bottom = check_bottom + 16
     if crypto:
-        render_crypto(img, d, crypto, check_x1 - 430, check_bottom + 16)
+        crypto_bottom = render_crypto(img, d, crypto, check_x1 - 430,
+                                      crypto_bottom)
+    if etfs:
+        render_etfs(img, d, etfs, check_x1 - 430, crypto_bottom + 16)
 
     return Image.alpha_composite(img, overlay).convert("RGB")
 
@@ -863,6 +927,7 @@ def update(apply: bool, force: bool, bg_path: Path | None = None, corner: str = 
     watch_rules, watch_names = read_watchlist()
     watch = watchlist_stats(watch_names)
     crypto = read_crypto()
+    etfs = read_etfs()
     total = float(data.get("total_usd") or 0)
     summary = f"{money(total)} | " + " ".join(
         f"{s.get('label')}={money(s.get('total_usd'))}" for s in data.get("sources", []))
@@ -875,7 +940,7 @@ def update(apply: bool, force: bool, bg_path: Path | None = None, corner: str = 
             return summary + f"  [skipped: {', '.join(failed)} unavailable, kept previous]"
 
     img = render(data, bg_path, corner, hidden, plan, positions, prices, metrics,
-                 fx, watch, watch_rules, crypto)
+                 fx, watch, watch_rules, crypto, etfs)
     img.save(OUT, "PNG")
 
     bg_sig = f"{bg_path}:{bg_path.stat().st_mtime_ns}" if bg_path and bg_path.exists() else "none"
