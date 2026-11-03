@@ -156,10 +156,20 @@ def check(sym: str) -> dict | None:
 
 
 def main() -> int:
+    import argparse
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--limit", type=int, help="only scan the first N names")
+    ap.add_argument("--no-write", action="store_true",
+                    help="test run: print results, write nothing")
+    args = ap.parse_args()
+
     rf = risk_free()
     pe_max = 100.0 / (rf + PREMIUM)
     tickers = [l.strip() for l in UNIVERSE.read_text(encoding="utf-8").splitlines()
                if l.strip() and not l.startswith("#")]
+    if args.limit:
+        tickers = tickers[:args.limit]
     print(f"risk-free {rf:.2f}% -> P/E ceiling {pe_max:.1f}x; "
           f"{len(tickers)} names")
 
@@ -193,6 +203,14 @@ def main() -> int:
 
     rules = {"risk_free": round(rf, 2), "pe_max": round(pe_max, 1),
              "drawdown_min": DRAWDOWN_MIN, "asof": str(date.today())}
+    if args.no_write:
+        print(f"\nTEST RUN: {len(rows)} passed quality, "
+              f"{sum(r['buy'] for r in rows)} at BUY")
+        for r in keep:
+            print(f"  {r['ticker']:10s} {r['name'][:26]:26s} {r['pe']:5.1f}x  "
+                  f"dd {r['dd']:+5.0f}%  rel {r.get('rel')}")
+        return 0
+
     OUT.write_text(json.dumps({"rules": rules, "names": keep}, indent=1),
                    encoding="utf-8")
 

@@ -651,14 +651,15 @@ QUESTIONS = [
 ]
 
 
-def render_checklist(img: Image.Image, d: ImageDraw.ImageDraw) -> None:
-    """The ten questions, bottom-left, so they're always in view."""
+def render_checklist(img: Image.Image, d: ImageDraw.ImageDraw,
+                     right_x: int, top_y: int) -> None:
+    """The ten questions, beside the monthly plan."""
     pad_w, row_h = 430, 17
     pad_h = 40 + row_h * len(QUESTIONS) + 18
-    x0 = 56
-    y1 = SCREEN_H - 72
-    y0 = y1 - pad_h
-    x1 = x0 + pad_w
+    x1 = right_x
+    x0 = x1 - pad_w
+    y0 = top_y
+    y1 = y0 + pad_h
 
     frosted_panel(img, (x0, y0, x1, y1), 16)
     d.rounded_rectangle([x0, y0, x1, y1], radius=16,
@@ -759,7 +760,7 @@ def render(data: dict, bg_path: Path | None = None, corner: str = "tr",
         render_watchlist(img, d, watch, watch_rules or {}, x1,
                          watch_bottom + 16)
 
-    render_checklist(img, d)
+    render_checklist(img, d, x0 - 18 - 300 - 18, y0)
 
     return Image.alpha_composite(img, overlay).convert("RGB")
 
