@@ -849,6 +849,59 @@ def render_alerts(img: Image.Image, d: ImageDraw.ImageDraw, rows: list[dict],
     return y1
 
 
+FIB_ROWS = [
+    (0.236, 75, (110, 122, 142), "shallow"),
+    (0.382, 45, (46, 204, 113), "first buy"),
+    (0.500, 31, (46, 204, 113), "second"),
+    (0.618, 19, (245, 158, 11), "third"),
+    (0.786, 10, (239, 107, 107), "trend broken"),
+]
+# measured by fib_study.py: 256 pullbacks of 5%+ across 600 stocks, 5 years
+
+
+def render_fib(img: Image.Image, d: ImageDraw.ImageDraw,
+               left_x: int, top_y: int, pad_w: int = 430) -> int:
+    """How often a pullback actually reaches each Fib level (measured, not folklore)."""
+    pad_h = 56 + 18 * len(FIB_ROWS)
+    x0, y0 = left_x, top_y
+    x1 = x0 + pad_w
+    y1 = y0 + pad_h
+
+    frosted_panel(img, (x0, y0, x1, y1), 16)
+    d.rounded_rectangle([x0, y0, x1, y1], radius=16,
+                        outline=(255, 255, 255, 28), width=1)
+
+    f_label = ImageFont.truetype(FONT_SEMI, 9)
+    f_row = ImageFont.truetype(FONT_BOLD, 10)
+    f_small = ImageFont.truetype(FONT_REG, 9)
+    f_pct = ImageFont.truetype(FONT_SEMI, 9)
+
+    px, py = x0 + 20, y0 + 15
+    d.ellipse([px, py + 2, px + 5, py + 7], fill=(90, 170, 255))
+    draw_tracked(d, (px + 11, py - 1), "FIB PULLBACKS", f_label,
+                 (190, 200, 220), tracking=2.0)
+    tag = "256 dips · 600 stocks"
+    d.text((x1 - 20 - d.textlength(tag, font=f_small), py), tag,
+           font=f_small, fill=(150, 162, 184))
+
+    py += 20
+    bar_x, bar_w = px + 52, 132
+    for level, pct, colour, note in FIB_ROWS:
+        d.text((px, py - 1), f"{level:.3f}", font=f_row, fill=(210, 219, 234))
+        d.rounded_rectangle([bar_x, py + 2, bar_x + bar_w, py + 6], radius=2,
+                            fill=(38, 46, 62))
+        d.rounded_rectangle([bar_x, py + 2,
+                             bar_x + max(3, bar_w * pct / 100), py + 6],
+                            radius=2, fill=colour)
+        d.text((bar_x + bar_w + 10, py - 1), f"{pct:>3d}%", font=f_pct,
+               fill=(200, 208, 222))
+        d.text((x1 - 20 - d.textlength(note, font=f_small), py),
+               note, font=f_small, fill=(150, 162, 184))
+        py += 18
+
+    return y1
+
+
 def render(data: dict, bg_path: Path | None = None, corner: str = "tr",
            hidden: bool = False, plan: dict | None = None,
            positions: list[dict] | None = None,
@@ -936,7 +989,9 @@ def render(data: dict, bg_path: Path | None = None, corner: str = "tr",
         etf_bottom = render_etfs(img, d, etfs, check_x1 - 430,
                                  crypto_bottom + 16)
         if alerts:
-            render_alerts(img, d, alerts, check_x1 - 430, etf_bottom + 16)
+            alerts_bottom = render_alerts(img, d, alerts, check_x1 - 430,
+                                          etf_bottom + 16)
+            render_fib(img, d, check_x1 - 430, alerts_bottom + 16)
 
     return Image.alpha_composite(img, overlay).convert("RGB")
 
