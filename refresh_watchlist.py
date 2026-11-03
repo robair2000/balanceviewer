@@ -88,6 +88,21 @@ def median_pe(t, info) -> float | None:
     return float(pd.Series(pes).median())
 
 
+def rsi(closes: list[float], n: int = 14) -> float:
+    if len(closes) < n + 2:
+        return 50.0
+    gains = [max(closes[i] - closes[i - 1], 0.0) for i in range(1, len(closes))]
+    losses = [max(closes[i - 1] - closes[i], 0.0) for i in range(1, len(closes))]
+    ag = sum(gains[:n]) / n
+    al = sum(losses[:n]) / n
+    for i in range(n, len(gains)):
+        ag = (ag * (n - 1) + gains[i]) / n
+        al = (al * (n - 1) + losses[i]) / n
+    if al == 0:
+        return 100.0
+    return 100 - 100 / (1 + ag / al)
+
+
 def check(sym: str) -> dict | None:
     t = yf.Ticker(sym)
     fin, bs, cf = t.financials, t.balance_sheet, t.cashflow
@@ -165,6 +180,13 @@ def check(sym: str) -> dict | None:
         return statistics.pstdev(xs) * math.sqrt(252)
 
     v30, v1y = vol(rs[-30:]), vol(rs)
+    r14 = rsi(closes)
+    from_30d_low = closes[-1] / min(closes[-30:]) - 1
+
+    # overbought or already well off the base = a bounce, not a bottom
+    if r14 >= 70 or from_30d_low > 0.12:
+        return None
+
     checks = [dd <= -0.30, from_low <= 0.25, r30 > 0,
               v30 == v30 and v1y == v1y and v30 < 0.85 * v1y]
     score = sum(checks)
@@ -173,6 +195,7 @@ def check(sym: str) -> dict | None:
             "sector": info.get("sector") or "?",
             "pe": float(fpe), "ey": ey, "dd": dd * 100,
             "from_low": from_low * 100, "r30": r30 * 100,
+            "rsi": r14, "from_30d_low": from_30d_low * 100,
             "score": score, "checks": checks,
             "med": med, "rel": rel, "roe": roe, "cagr": cagr}
 

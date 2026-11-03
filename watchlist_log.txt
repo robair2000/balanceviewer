@@ -1,13 +1,13 @@
-2026-11-03 refresh: 203 passed quality, 46 at BUY, kept 12
-  ACM        AECOM                       10.5x  dd   -50%  low  +13%  30d    +5%  4/4  0.33x own median
-  PODD       Insulet Corporation         19.9x  dd   -56%  low  +18%  30d    +9%  4/4  0.34x own median
-  ZTS        Zoetis Inc.                 13.0x  dd   -41%  low  +21%  30d   +17%  4/4  0.44x own median
-  PGHN.SW    PARTNERS GROUP N            14.3x  dd   -37%  low  +10%  30d    +5%  4/4  0.63x own median
+2026-11-03 refresh: 112 passed quality, 28 at BUY, kept 12
+  PGHN.SW    PARTNERS GROUP N            14.3x  dd   -37%  low  +11%  30d    +5%  4/4  0.63x own median
   GBF.DE     Bilfinger SE                10.6x  dd   -52%  low   +9%  30d    +3%  4/4  0.69x own median
   APP        Applovin Corporation        11.4x  dd   -69%  low   +0%  30d   -31%  3/4  0.17x own median
-  INTU       Intuit Inc.                 13.1x  dd   -47%  low  +39%  30d   +16%  3/4  0.23x own median
-  LULU       lululemon athletica inc.    12.5x  dd   -50%  low  +17%  30d    +6%  3/4  0.38x own median
+  R3NK.DE    RENK Group AG               17.2x  dd   -46%  low   +7%  30d   -12%  3/4  0.39x own median
   NFLX       Netflix, Inc.               16.5x  dd   -46%  low   +1%  30d   -15%  3/4  0.43x own median
   FRES.L     FRESNILLO PLC ORD USD0.50   10.5x  dd   -49%  low   +6%  30d   -24%  3/4  0.49x own median
   DECK       Deckers Outdoor Corporatio  10.4x  dd   -30%  low  +10%  30d    +6%  3/4  0.51x own median
   RMBS       Rambus, Inc.                21.6x  dd   -51%  low   +5%  30d   -13%  3/4  0.68x own median
+  MONC.MI    MONCLER                     17.7x  dd   -22%  low   +6%  30d    +2%  3/4  0.81x own median
+  AXFO.ST    Axfood AB                   22.3x  dd   -15%  low  +25%  30d    +9%  3/4  0.98x own median
+  NVDA       NVIDIA Corporation          12.7x  dd   -16%  low  +23%  30d   -11%  2/4  0.28x own median
+  APO        Apollo Global Management,   11.2x  dd   -21%  low  +20%  30d    -7%  2/4  0.52x own median
