@@ -1,1 +1,13 @@
-2026-11-03 refresh: 0 passed quality, 0 at BUY, kept 0
+2026-11-03 refresh: 203 passed quality, 46 at BUY, kept 12
+  APP        Applovin Corporation        11.4x  dd   -69%  0.17x own median BUY
+  INTU       Intuit Inc.                 13.1x  dd   -47%  0.23x own median BUY
+  TTMI       TTM Technologies, Inc.       9.2x  dd   -65%  0.23x own median BUY
+  CHWY       Chewy, Inc.                 11.9x  dd   -37%  0.25x own median BUY
+  ACM        AECOM                       10.5x  dd   -50%  0.33x own median BUY
+  LULU       lululemon athletica inc.    12.5x  dd   -50%  0.38x own median BUY
+  NFLX       Netflix, Inc.               16.5x  dd   -46%  0.43x own median BUY
+  ZTS        Zoetis Inc.                 13.0x  dd   -41%  0.44x own median BUY
+  MMS        Maximus, Inc.                8.0x  dd   -32%  0.46x own median BUY
+  FRES.L     FRESNILLO PLC ORD USD0.50   10.8x  dd   -50%  0.50x own median BUY
+  APO        Apollo Global Management,   11.2x  dd   -21%  0.52x own median BUY
+  HOC.L      HOCHSCHILD MINING PLC ORD    7.4x  dd   -47%  0.56x own median BUY

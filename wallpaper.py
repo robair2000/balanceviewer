@@ -41,6 +41,8 @@ POSITIONS = Path(os.getenv("SAXO_POSITIONS_FILE", str(ROOT / "positions.json")))
 METRICS = Path(os.getenv("SAXO_METRICS_FILE", str(ROOT / "basler_metrics.json")))
 # quality watchlist: buy trigger = N% below the 52-week high
 WATCHLIST = Path(os.getenv("SAXO_WATCHLIST_FILE", str(ROOT / "watchlist.json")))
+# crypto bottoming screen output
+CRYPTO = Path(os.getenv("SAXO_CRYPTO_FILE", str(ROOT / "crypto_watch.json")))
 
 SCREEN_W, SCREEN_H = 1920, 1080
 FONT_BOLD = "C:/Windows/Fonts/segoeuib.ttf"
@@ -652,7 +654,7 @@ QUESTIONS = [
 
 
 def render_checklist(img: Image.Image, d: ImageDraw.ImageDraw,
-                     right_x: int, top_y: int) -> None:
+                     right_x: int, top_y: int) -> int:
     """The ten questions, beside the monthly plan."""
     pad_w, row_h = 430, 17
     pad_h = 40 + row_h * len(QUESTIONS) + 18
@@ -683,6 +685,65 @@ def render_checklist(img: Image.Image, d: ImageDraw.ImageDraw,
 
     d.text((px, py + 1), "any \u2018don't know\u2019 \u2192 too-hard pile",
            font=f_small, fill=(110, 122, 142))
+    return y1
+
+
+def read_crypto() -> list[dict]:
+    try:
+        data = json.loads(CRYPTO.read_text(encoding="utf-8"))
+    except Exception:                                  # noqa: BLE001
+        return []
+    return [c for c in data.get("coins", []) if c.get("score", 0) >= 2][:10]
+
+
+def render_crypto(img: Image.Image, d: ImageDraw.ImageDraw, coins: list[dict],
+                  left_x: int, top_y: int, pad_w: int = 430) -> int:
+    """Coins closest to a bottom: deep, near the low, turning, basing."""
+    if not coins:
+        return top_y
+    pad_h = 56 + 18 * len(coins)
+    x0, y0 = left_x, top_y
+    x1 = x0 + pad_w
+    y1 = y0 + pad_h
+
+    frosted_panel(img, (x0, y0, x1, y1), 16)
+    d.rounded_rectangle([x0, y0, x1, y1], radius=16,
+                        outline=(255, 255, 255, 28), width=1)
+
+    f_label = ImageFont.truetype(FONT_SEMI, 9)
+    f_row = ImageFont.truetype(FONT_SEMI, 11)
+    f_val = ImageFont.truetype(FONT_BOLD, 10)
+    f_small = ImageFont.truetype(FONT_REG, 9)
+
+    px, py = x0 + 20, y0 + 15
+    d.ellipse([px, py + 2, px + 5, py + 7], fill=(245, 158, 11))
+    draw_tracked(d, (px + 11, py - 1), "CRYPTO BOTTOMING", f_label,
+                 (190, 200, 220), tracking=2.0)
+    tag = "deep · near low · turning · basing"
+    d.text((x1 - 20 - d.textlength(tag, font=f_small), py), tag,
+           font=f_small, fill=(150, 162, 184))
+
+    py += 18
+    for c in coins:
+        score = int(c.get("score", 0))
+        name = str(c.get("sym", ""))[:6]
+        d.text((px, py), name, font=f_row, fill=(210, 219, 234))
+        d.text((px + 62, py), f"{c.get('from_low', 0):+.0f}% low",
+               font=f_small, fill=(140, 152, 174))
+        r30 = c.get("r30", 0)
+        d.text((px + 150, py), f"{r30:+.0f}% 30d", font=f_small,
+               fill=GREEN if r30 > 0 else (239, 107, 107))
+
+        dots = ""
+        for i in range(4):
+            dots += "\u25cf" if i < score else "\u25cb"
+        colour = GREEN if score == 4 else ((245, 158, 11) if score == 3
+                                           else (110, 122, 142))
+        d.text((x1 - 20 - d.textlength(dots, font=f_val), py - 1), dots,
+               font=f_val, fill=colour)
+        py += 18
+
+    return y1
 
 
 def render(data: dict, bg_path: Path | None = None, corner: str = "tr",
@@ -692,7 +753,8 @@ def render(data: dict, bg_path: Path | None = None, corner: str = "tr",
            metrics: dict | None = None,
            fx: float = 1.16,
            watch: list[dict] | None = None,
-           watch_rules: dict | None = None) -> Image.Image:
+           watch_rules: dict | None = None,
+           crypto: list[dict] | None = None) -> Image.Image:
     rows = build_rows(data, hidden)
     pad_w = 336
     pad_h = 88 + 20 * len(rows)
@@ -760,7 +822,10 @@ def render(data: dict, bg_path: Path | None = None, corner: str = "tr",
         render_watchlist(img, d, watch, watch_rules or {}, x1,
                          watch_bottom + 16)
 
-    render_checklist(img, d, x0 - 18 - 300 - 18, y0)
+    check_x1 = x0 - 18 - 300 - 18
+    check_bottom = render_checklist(img, d, check_x1, y0)
+    if crypto:
+        render_crypto(img, d, crypto, check_x1 - 430, check_bottom + 16)
 
     return Image.alpha_composite(img, overlay).convert("RGB")
 
@@ -803,6 +868,7 @@ def update(apply: bool, force: bool, bg_path: Path | None = None, corner: str = 
     fx = usd_per_eur() if any(p.get("ccy") == "USD" for p in positions) else 1.16
     watch_rules, watch_names = read_watchlist()
     watch = watchlist_stats(watch_names)
+    crypto = read_crypto()
     total = float(data.get("total_usd") or 0)
     summary = f"{money(total)} | " + " ".join(
         f"{s.get('label')}={money(s.get('total_usd'))}" for s in data.get("sources", []))
@@ -815,7 +881,7 @@ def update(apply: bool, force: bool, bg_path: Path | None = None, corner: str = 
             return summary + f"  [skipped: {', '.join(failed)} unavailable, kept previous]"
 
     img = render(data, bg_path, corner, hidden, plan, positions, prices, metrics,
-                 fx, watch, watch_rules)
+                 fx, watch, watch_rules, crypto)
     img.save(OUT, "PNG")
 
     bg_sig = f"{bg_path}:{bg_path.stat().st_mtime_ns}" if bg_path and bg_path.exists() else "none"
