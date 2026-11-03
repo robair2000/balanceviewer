@@ -256,7 +256,7 @@ def plan_actions(cur: dict, prev: dict | None) -> list[tuple[str, str]]:
 
 
 def render_plan(img: Image.Image, d: ImageDraw.ImageDraw, plan: dict,
-                left_x: int, top_y: int, pad_w: int = 300) -> int:
+                left_x: int, top_y: int, pad_w: int = 336) -> int:
     """Draw the saxoBot panel at an explicit position."""
     cur = plan["current"]
     rows = cur.get("rows") or []
@@ -377,7 +377,7 @@ def usd_per_eur() -> float:
 
 def render_positions(img: Image.Image, d: ImageDraw.ImageDraw,
                      positions: list[dict], prices: dict[str, float],
-                     right_x: int, top_y: int, pad_w: int = 300,
+                     right_x: int, top_y: int, pad_w: int = 336,
                      fx: float = 1.16) -> int:
     """Holdings with live P&L, stacked under the balance card."""
     row_h = 36
@@ -449,7 +449,7 @@ def read_metrics() -> dict:
 
 
 def render_thesis(img: Image.Image, d: ImageDraw.ImageDraw, m: dict,
-                  right_x: int, top_y: int, pad_w: int = 300) -> int:
+                  right_x: int, top_y: int, pad_w: int = 336) -> int:
     """The three numbers that keep or kill the Basler thesis."""
     if not m:
         return top_y
@@ -571,7 +571,7 @@ def watchlist_stats(names: list[dict]) -> list[dict]:
 
 def render_watchlist(img: Image.Image, d: ImageDraw.ImageDraw,
                      rows: list[dict], rules: dict, right_x: int,
-                     top_y: int, pad_w: int = 300) -> int:
+                     top_y: int, pad_w: int = 336) -> int:
     """Quality names, their forward P/E, and how far they are from a buy."""
     if not rows:
         return top_y
