@@ -8,3 +8,4 @@ background.*
 assets/background.*
 *.bak
 *.log
+.crypto_refresh.json

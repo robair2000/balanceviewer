@@ -47,6 +47,8 @@ CRYPTO = Path(os.getenv("SAXO_CRYPTO_FILE", str(ROOT / "crypto_watch.json")))
 ETFS = Path(os.getenv("SAXO_ETF_FILE", str(ROOT / "etf_watch.json")))
 # catalyst scan output
 ALERTS = Path(os.getenv("SAXO_ALERTS_FILE", str(ROOT / "alerts.json")))
+# throttle file: when the crypto screen was last launched
+CRYPTO_STAMP = ROOT / ".crypto_refresh.json"
 
 SCREEN_W, SCREEN_H = 1920, 1080
 FONT_BOLD = "C:/Windows/Fonts/segoeuib.ttf"
@@ -951,9 +953,11 @@ def read_state() -> dict:
         return {}
 
 
-def write_state(digest: str, total: float, hidden: bool) -> None:
+def write_state(digest: str, total: float, hidden: bool,
+                crypto_sig: str = "") -> None:
     STATE.write_text(json.dumps({"digest": digest, "total": total, "hidden": hidden,
-                                 "at": time.time()}), encoding="utf-8")
+                                 "crypto_sig": crypto_sig, "at": time.time()}),
+                     encoding="utf-8")
 
 
 def refresh_alerts(max_age: int = 3600) -> None:
@@ -969,10 +973,40 @@ def refresh_alerts(max_age: int = 3600) -> None:
         pass
 
 
+def refresh_crypto(max_age: int = 6 * 3600, retry_after: int = 3600) -> None:
+    """Re-run the crypto bottoming screen in the background when it is stale.
+
+    Crypto trades around the clock, so unlike the stock watchlist and the ETF
+    screen this refreshes on its own. It is launched detached so a slow scan
+    never blocks the wallpaper loop; the next tick picks up the new file.
+    """
+    try:
+        now = time.time()
+        if CRYPTO.exists() and now - CRYPTO.stat().st_mtime < max_age:
+            return
+        try:
+            last = float(json.loads(CRYPTO_STAMP.read_text(encoding="utf-8"))["at"])
+        except Exception:                              # noqa: BLE001
+            last = 0.0
+        if now - last < retry_after:
+            return
+        script = ROOT / "crypto_bottom.py"
+        if not script.exists():
+            return
+        import subprocess
+        subprocess.Popen([sys.executable, str(script)], cwd=str(ROOT),
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                         creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+        CRYPTO_STAMP.write_text(json.dumps({"at": now}), encoding="utf-8")
+    except Exception:                                  # noqa: BLE001
+        pass
+
+
 def update(apply: bool, force: bool, bg_path: Path | None = None, corner: str = "tr",
            threshold: float = 0.25, max_age: int = 3600,
            hidden: bool | None = None, toggle: bool = False) -> str:
     refresh_alerts()
+    refresh_crypto()
     state = read_state()
     if toggle:
         hidden = not bool(state.get("hidden"))
@@ -1019,13 +1053,16 @@ def update(apply: bool, force: bool, bg_path: Path | None = None, corner: str = 
     met_sig = "|".join(f"{k}={v}" for k, v in sorted((metrics or {}).items())
                        if not isinstance(v, dict))
     watch_sig = "|".join(f"{r['ticker']}@{r['price']:.2f}" for r in (watch or []))
-    crypto_sig = "|".join(f"{c['sym']}:{c.get('score')}" for c in (crypto or [])[:4])
+    crypto_sig = "|".join(
+        f"{c['sym']}:{c.get('score')}:{float(c.get('from_low', 0)):.0f}:"
+        f"{float(c.get('r30', 0)):.0f}" for c in (crypto or [])[:10])
     digest = hashlib.sha256(
         f"{summary}|{corner}|{bg_sig}|{hidden}{plan_sig}{pos_sig}{met_sig}"
         f"{watch_sig}{crypto_sig}".encode()).hexdigest()
 
     previous_digest = state.get("digest")
     previous_total = state.get("total")
+    previous_crypto = state.get("crypto_sig")
     age = time.time() - float(state.get("at") or 0)
     mode = "  [hidden]" if hidden else ""
 
@@ -1034,6 +1071,11 @@ def update(apply: bool, force: bool, bg_path: Path | None = None, corner: str = 
 
     if force:
         reason = "forced"
+    elif previous_crypto is not None and crypto_sig != previous_crypto:
+        # the crypto screen is the one panel that refreshes on its own, so a
+        # new scan repaints immediately instead of waiting for the balance
+        # threshold or the hour to roll over
+        reason = "crypto screen updated"
     elif age > max_age:
         reason = f"refresh, {int(age // 60)}m old"
     elif previous_total and abs(total - float(previous_total)) < abs(float(previous_total)) * threshold / 100:
@@ -1044,7 +1086,7 @@ def update(apply: bool, force: bool, bg_path: Path | None = None, corner: str = 
         return summary + "  [unchanged, skipped]" + mode
 
     set_wallpaper(OUT)
-    write_state(digest, total, hidden)
+    write_state(digest, total, hidden, crypto_sig)
     return summary + f"  [{reason}, applied]" + mode
 
 
