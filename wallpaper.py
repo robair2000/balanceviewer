@@ -1008,7 +1008,11 @@ def main() -> int:
     if args.loop:
         print(f"updating every {args.loop}s, Ctrl+C to stop")
         try:
+            started = os.path.getmtime(__file__)
             while True:
+                if os.path.getmtime(__file__) != started:
+                    print("wallpaper.py changed - restarting with the new code")
+                    os.execv(sys.executable, [sys.executable] + sys.argv)
                 try:
                     print(time.strftime("%H:%M:%S"),
                           update(apply, False, bg_path, args.corner, args.threshold,
