@@ -1,0 +1,257 @@
+{
+ "generated": "2026-11-03T11:35+00:00",
+ "alerts": [
+  {
+   "ticker": "TEM",
+   "date": "2026-11-03",
+   "kind": "UPGRADE",
+   "source": "news",
+   "text": "Jefferies upgrades Tempus AI stock rating to hold, raises price target to $70 - Investing.com"
+  },
+  {
+   "ticker": "TEM",
+   "date": "2026-11-03",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Tempus AI Inc (TEM) Q3 2026 Earnings Call Highlights: Revenue Jumps 23% to $411. ... - Yahoo Finance"
+  },
+  {
+   "ticker": "R3NK.DE",
+   "date": "2026-11-03",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Renk\u2019s Earnings Outlook and Naval Growth Tell Different Stories - ad-hoc-news.de"
+  },
+  {
+   "ticker": "R3NK.DE",
+   "date": "2026-11-03",
+   "kind": "CONTRACT",
+   "source": "news",
+   "text": "Renk Heads to Euronaval With One Signed Submarine Order \u2014 and a Longer Wish List - ad-hoc-news.de"
+  },
+  {
+   "ticker": "R3NK.DE",
+   "date": "2026-11-03",
+   "kind": "CONTRACT",
+   "source": "news",
+   "text": "Renk Wins Saab Work and Seals UK Submarine Deal, but DZ Bank Trims Its Fair Value to \u20ac56 - ad-hoc-news.de"
+  },
+  {
+   "ticker": "TEM",
+   "date": "2026-11-02",
+   "kind": "EARNINGS",
+   "source": "SEC 8-K",
+   "text": "8-K 2.02,7.01,9.01"
+  },
+  {
+   "ticker": "TEM",
+   "date": "2026-11-02",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Tempus AI Shares Rise 4.18% as Q3 Earnings Beat Forecasts and Revenue Guidance Increases - Yahoo Finance"
+  },
+  {
+   "ticker": "TEM",
+   "date": "2026-11-02",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Tempus AI, Inc. 2026 Q3 - Results - Earnings Call Presentation (NASDAQ:TEM) 2026-11-02 - Seeking Alpha"
+  },
+  {
+   "ticker": "TEM",
+   "date": "2026-11-02",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Tempus AI Revenue Up 23%; Gains Cut Net Loss: Rapid Earnings Reaction - The Motley Fool"
+  },
+  {
+   "ticker": "TEM",
+   "date": "2026-11-02",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Do You Own Tempus AI Without Knowing It? Check These ETFs After Its Earnings Surge - 24/7 Wall St."
+  },
+  {
+   "ticker": "APP",
+   "date": "2026-11-02",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Should AppLovin Stock Be in Your Portfolio Before Q3 Earnings? - Zacks Investment Research"
+  },
+  {
+   "ticker": "APP",
+   "date": "2026-11-02",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Should AppLovin Stock Be in Your Portfolio Before Q3 Earnings? - Yahoo Finance"
+  },
+  {
+   "ticker": "NVDA",
+   "date": "2026-11-02",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Nvidia may miss January launch of GeForce RTX 5080 24GB - Notebookcheck"
+  },
+  {
+   "ticker": "APO",
+   "date": "2026-11-02",
+   "kind": "CONTRACT",
+   "source": "news",
+   "text": "Apollo Flexes Underwriting Power With $9.6 Billion ADT Debt Deal - Yahoo Finance"
+  },
+  {
+   "ticker": "APO",
+   "date": "2026-11-02",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Apollo Q3 earnings preview - Alternatives Watch"
+  },
+  {
+   "ticker": "APP",
+   "date": "2026-11-01",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "AppLovin Stock Is Struggling: 3 Things to Watch in Q3 Earnings That Could Get APP Back on Track - Barchart.com"
+  },
+  {
+   "ticker": "NFLX",
+   "date": "2026-11-01",
+   "kind": "UPGRADE",
+   "source": "news",
+   "text": "Netflix's U.S. Audience Engagement Problem Is Hurting The Stock (Rating Downgrade) - Seeking Alpha"
+  },
+  {
+   "ticker": "BSL.DE",
+   "date": "2026-10-29",
+   "kind": "UPGRADE",
+   "source": "news",
+   "text": "Basler AG : Jefferies reaffirms its Buy rating - www.marketscreener.com"
+  },
+  {
+   "ticker": "TER",
+   "date": "2026-10-29",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Teradyne Q3 Earnings Call Highlights AI Demand and 2027 Growth Plans - Zacks Investment Research"
+  },
+  {
+   "ticker": "RMBS",
+   "date": "2026-10-29",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Rambus Inc. Just Beat Analyst Forecasts, And Analysts Have Been Updating Their Predictions - Simply Wall St"
+  },
+  {
+   "ticker": "TER",
+   "date": "2026-10-28",
+   "kind": "EARNINGS",
+   "source": "SEC 8-K",
+   "text": "8-K 2.02,9.01"
+  },
+  {
+   "ticker": "TER",
+   "date": "2026-10-28",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Teradyne Earnings: AI-Led, but Diversified Growth Looks Positive, and Shares Look Undervalued - Morningstar"
+  },
+  {
+   "ticker": "TER",
+   "date": "2026-10-28",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Teradyne stock falls despite Q3 earnings beat, strong AI-driven outlook (TER:NASDAQ) - Seeking Alpha"
+  },
+  {
+   "ticker": "TER",
+   "date": "2026-10-28",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Teradyne: Q3 Earnings Snapshot - Yahoo Finance"
+  },
+  {
+   "ticker": "TER",
+   "date": "2026-10-28",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Teradyne, Inc. Q3 2026 Earnings Call Summary - Yahoo Finance"
+  },
+  {
+   "ticker": "TER",
+   "date": "2026-10-28",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Teradyne Inc (TER) Q3 2026 Earnings Call Highlights: AI-Driven Revenue Tops 60% as Sales Surge ... - Yahoo Finance"
+  },
+  {
+   "ticker": "APP",
+   "date": "2026-10-28",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "AppLovin (APP) Earnings Expected to Grow: Should You Buy? - Yahoo Finance"
+  },
+  {
+   "ticker": "NFLX",
+   "date": "2026-10-28",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Netflix Shares Are Down 9% Since Earnings. Is the Stock a Buy? - Morningstar"
+  },
+  {
+   "ticker": "NFLX",
+   "date": "2026-10-28",
+   "kind": "UPGRADE",
+   "source": "news",
+   "text": "Netflix: Price Increases Are No Longer Providing Unchecked Upside (Downgrade) (NFLX) - Seeking Alpha"
+  },
+  {
+   "ticker": "TER",
+   "date": "2026-10-27",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Teradyne Stock Falls Despite Chip-Gear Maker Beating Q3 Goals - Investor's Business Daily"
+  },
+  {
+   "ticker": "TER",
+   "date": "2026-10-27",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Teradyne Revenue, Profit Jump on Semiconductor Test Growth - WSJ"
+  },
+  {
+   "ticker": "TER",
+   "date": "2026-10-27",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Teradyne (TER) Q3 Earnings: Taking a Look at Key Metrics Versus Estimates - Yahoo Finance"
+  },
+  {
+   "ticker": "RMBS",
+   "date": "2026-10-27",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Rambus shares fall despite earnings beat as analysts weigh AI-driven growth outlook - Proactive financial news"
+  },
+  {
+   "ticker": "RMBS",
+   "date": "2026-10-27",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Rambus Inc. Q3 2026 Earnings Call Summary - Yahoo Finance"
+  },
+  {
+   "ticker": "RMBS",
+   "date": "2026-10-26",
+   "kind": "EARNINGS",
+   "source": "SEC 8-K",
+   "text": "8-K 2.02,9.01"
+  },
+  {
+   "ticker": "DECK",
+   "date": "2026-10-22",
+   "kind": "EARNINGS",
+   "source": "SEC 8-K",
+   "text": "8-K 2.02,5.02,7.01,9.01"
+  }
+ ]
+}

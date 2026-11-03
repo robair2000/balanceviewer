@@ -45,6 +45,8 @@ WATCHLIST = Path(os.getenv("SAXO_WATCHLIST_FILE", str(ROOT / "watchlist.json")))
 CRYPTO = Path(os.getenv("SAXO_CRYPTO_FILE", str(ROOT / "crypto_watch.json")))
 # ETF diversifier screen output
 ETFS = Path(os.getenv("SAXO_ETF_FILE", str(ROOT / "etf_watch.json")))
+# catalyst scan output
+ALERTS = Path(os.getenv("SAXO_ALERTS_FILE", str(ROOT / "alerts.json")))
 
 SCREEN_W, SCREEN_H = 1920, 1080
 FONT_BOLD = "C:/Windows/Fonts/segoeuib.ttf"
@@ -792,6 +794,57 @@ def render_etfs(img: Image.Image, d: ImageDraw.ImageDraw, rows: list[dict],
     return y1
 
 
+def read_alerts() -> list[dict]:
+    try:
+        data = json.loads(ALERTS.read_text(encoding="utf-8"))
+    except Exception:                                  # noqa: BLE001
+        return []
+    return data.get("alerts", [])[:4]
+
+
+def render_alerts(img: Image.Image, d: ImageDraw.ImageDraw, rows: list[dict],
+                  left_x: int, top_y: int, pad_w: int = 430) -> int:
+    """Recent published catalysts on names we own or watch."""
+    if not rows:
+        return top_y
+    pad_h = 56 + 18 * len(rows)
+    x0, y0 = left_x, top_y
+    x1 = x0 + pad_w
+    y1 = y0 + pad_h
+
+    frosted_panel(img, (x0, y0, x1, y1), 16)
+    d.rounded_rectangle([x0, y0, x1, y1], radius=16,
+                        outline=(255, 255, 255, 28), width=1)
+
+    f_label = ImageFont.truetype(FONT_SEMI, 9)
+    f_row = ImageFont.truetype(FONT_SEMI, 10)
+    f_val = ImageFont.truetype(FONT_BOLD, 9)
+    f_small = ImageFont.truetype(FONT_REG, 9)
+
+    px, py = x0 + 20, y0 + 15
+    d.ellipse([px, py + 2, px + 5, py + 7], fill=(239, 107, 107))
+    draw_tracked(d, (px + 11, py - 1), "CATALYSTS", f_label, (190, 200, 220),
+                 tracking=2.0)
+    tag = "published events · last 7 days"
+    d.text((x1 - 20 - d.textlength(tag, font=f_small), py), tag,
+           font=f_small, fill=(150, 162, 184))
+
+    py += 18
+    for a in rows:
+        kind = str(a.get("kind", ""))
+        colour = (GREEN if kind == "EARNINGS" else (245, 158, 11)
+                  if kind == "CONTRACT" else (155, 140, 255))
+        d.text((px, py), str(a.get("ticker", "")).split(".")[0][:6], font=f_val,
+               fill=(210, 219, 234))
+        d.text((px + 54, py), kind[:8], font=f_val, fill=colour)
+        text = str(a.get("text", ""))
+        d.text((px + 118, py - 1), fit_text(d, text, f_row, pad_w - 140),
+               font=f_row, fill=(170, 180, 198))
+        py += 18
+
+    return y1
+
+
 def render(data: dict, bg_path: Path | None = None, corner: str = "tr",
            hidden: bool = False, plan: dict | None = None,
            positions: list[dict] | None = None,
@@ -801,7 +854,8 @@ def render(data: dict, bg_path: Path | None = None, corner: str = "tr",
            watch: list[dict] | None = None,
            watch_rules: dict | None = None,
            crypto: list[dict] | None = None,
-           etfs: list[dict] | None = None) -> Image.Image:
+           etfs: list[dict] | None = None,
+           alerts: list[dict] | None = None) -> Image.Image:
     rows = build_rows(data, hidden)
     pad_w = 336
     pad_h = 88 + 20 * len(rows)
@@ -875,7 +929,10 @@ def render(data: dict, bg_path: Path | None = None, corner: str = "tr",
         crypto_bottom = render_crypto(img, d, crypto, check_x1 - 430,
                                       crypto_bottom)
     if etfs:
-        render_etfs(img, d, etfs, check_x1 - 430, crypto_bottom + 16)
+        etf_bottom = render_etfs(img, d, etfs, check_x1 - 430,
+                                 crypto_bottom + 16)
+        if alerts:
+            render_alerts(img, d, alerts, check_x1 - 430, etf_bottom + 16)
 
     return Image.alpha_composite(img, overlay).convert("RGB")
 
@@ -899,9 +956,23 @@ def write_state(digest: str, total: float, hidden: bool) -> None:
                                  "at": time.time()}), encoding="utf-8")
 
 
+def refresh_alerts(max_age: int = 3600) -> None:
+    """Re-run the catalyst scan if the file is older than an hour."""
+    try:
+        if ALERTS.exists() and time.time() - ALERTS.stat().st_mtime < max_age:
+            return
+        import subprocess
+        subprocess.run([sys.executable, str(ROOT / "catalyst_scan.py")],
+                       cwd=str(ROOT), timeout=180,
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except Exception:                                  # noqa: BLE001
+        pass
+
+
 def update(apply: bool, force: bool, bg_path: Path | None = None, corner: str = "tr",
            threshold: float = 0.25, max_age: int = 3600,
            hidden: bool | None = None, toggle: bool = False) -> str:
+    refresh_alerts()
     state = read_state()
     if toggle:
         hidden = not bool(state.get("hidden"))
@@ -920,6 +991,7 @@ def update(apply: bool, force: bool, bg_path: Path | None = None, corner: str = 
     watch = watchlist_stats(watch_names)
     crypto = read_crypto()
     etfs = read_etfs()
+    alerts = read_alerts()
     total = float(data.get("total_usd") or 0)
     summary = f"{money(total)} | " + " ".join(
         f"{s.get('label')}={money(s.get('total_usd'))}" for s in data.get("sources", []))
@@ -932,7 +1004,7 @@ def update(apply: bool, force: bool, bg_path: Path | None = None, corner: str = 
             return summary + f"  [skipped: {', '.join(failed)} unavailable, kept previous]"
 
     img = render(data, bg_path, corner, hidden, plan, positions, prices, metrics,
-                 fx, watch, watch_rules, crypto, etfs)
+                 fx, watch, watch_rules, crypto, etfs, alerts)
     img.save(OUT, "PNG")
 
     bg_sig = f"{bg_path}:{bg_path.stat().st_mtime_ns}" if bg_path and bg_path.exists() else "none"
