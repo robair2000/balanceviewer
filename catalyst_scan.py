@@ -26,9 +26,14 @@ DAYS_NEWS = 7
 DAYS_FILING = 14
 
 KINDS = [
-    ("EARNINGS", re.compile(r"beat|miss|raise[sd]? (guidance|outlook|forecast)|"
-                            r"record (revenue|orders|sales)|q[1-4] (results|earnings)|"
-                            r"earnings|profit (jump|surge|fall)", re.I)),
+    ("EARNINGS", re.compile(
+        r"beat|miss|rais(e|es|ed) (its )?(guidance|outlook|forecast)|"
+        r"increas(e|es|ed) (of )?(guidance|forecast|outlook)|"
+        r"hike[sd]? (guidance|forecast)|record (revenue|orders|sales)|"
+        r"q[1-4] (results|earnings)|quarterly (results|earnings)|"
+        r"preliminary (\d+|nine|six|three|twelve)-month|"
+        r"(annual|full-year|half-year|nine-month) (results?|forecast)|"
+        r"earnings|profit (jump|surge|fall)", re.I)),
     ("CONTRACT", re.compile(r"\b(contract|order|agreement|customer|deal|wins?|"
                             r"award|partnership)\b", re.I)),
     ("UPGRADE", re.compile(r"price target|upgrade|downgrade|buy rating|overweight|"
