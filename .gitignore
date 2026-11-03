@@ -9,3 +9,4 @@ assets/background.*
 *.bak
 *.log
 .crypto_refresh.json
+.etf_refresh.json
