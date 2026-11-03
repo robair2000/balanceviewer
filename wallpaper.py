@@ -896,9 +896,10 @@ def update(apply: bool, force: bool, bg_path: Path | None = None, corner: str = 
     met_sig = "|".join(f"{k}={v}" for k, v in sorted((metrics or {}).items())
                        if not isinstance(v, dict))
     watch_sig = "|".join(f"{r['ticker']}@{r['price']:.2f}" for r in (watch or []))
+    crypto_sig = "|".join(f"{c['sym']}:{c.get('score')}" for c in (crypto or [])[:4])
     digest = hashlib.sha256(
         f"{summary}|{corner}|{bg_sig}|{hidden}{plan_sig}{pos_sig}{met_sig}"
-        f"{watch_sig}".encode()).hexdigest()
+        f"{watch_sig}{crypto_sig}".encode()).hexdigest()
 
     previous_digest = state.get("digest")
     previous_total = state.get("total")

@@ -32,7 +32,20 @@ WRAPPED = {"wbtc", "weth", "steth", "wsteth", "cbeth", "reth", "weeth",
            "wbeth", "cbbtc", "lseth", "meth", "ezeth", "rseth"}
 
 
-def candles(sym: str) -> list[list[float]] | None:
+def closes_from_binance(sym: str) -> tuple[list[float], list[float]] | None:
+    try:
+        r = requests.get("https://api.binance.com/api/v3/klines",
+                         params={"symbol": f"{sym}USDT", "interval": "1d",
+                                 "limit": 365}, headers=HDR, timeout=20)
+        d = r.json()
+        if not isinstance(d, list) or len(d) < 120:
+            return None
+        return ([float(k[4]) for k in d], [float(k[3]) for k in d])
+    except Exception:                                      # noqa: BLE001
+        return None
+
+
+def closes_from_kucoin(sym: str) -> tuple[list[float], list[float]] | None:
     now = int(time.time())
     try:
         r = requests.get(KU, params={"type": "1day", "symbol": f"{sym}-USDT",
@@ -43,8 +56,34 @@ def candles(sym: str) -> list[list[float]] | None:
         return None
     if len(data) < 120:
         return None
-    # oldest first; [time, open, close, high, low, volume, turnover]
-    return [list(map(float, c)) for c in reversed(data)]
+    k = [list(map(float, c)) for c in reversed(data)]
+    return [x[2] for x in k], [x[4] for x in k]
+
+
+def closes_from_coingecko(cg_id: str) -> tuple[list[float], list[float]] | None:
+    try:
+        r = requests.get(
+            f"https://api.coingecko.com/api/v3/coins/{cg_id}/market_chart",
+            params={"vs_currency": "usd", "days": 365, "interval": "daily"},
+            headers=HDR, timeout=25)
+        prices = r.json().get("prices") or []
+    except Exception:                                      # noqa: BLE001
+        return None
+    if len(prices) < 120:
+        return None
+    c = [float(p[1]) for p in prices]
+    return c, c                       # market_chart has no intraday lows
+
+
+def candles(sym: str, cg_id: str) -> tuple[tuple[list[float], list[float]], str] | None:
+    for name, fn in (("binance", lambda: closes_from_binance(sym)),
+                     ("kucoin", lambda: closes_from_kucoin(sym))):
+        out = fn()
+        if out:
+            return out, name
+    out = closes_from_coingecko(cg_id)
+    time.sleep(2.5)                   # CoinGecko's free tier is slow
+    return (out, "coingecko") if out else None
 
 
 def vol(rets: list[float]) -> float:
@@ -56,19 +95,18 @@ def vol(rets: list[float]) -> float:
 def main() -> int:
     mk = requests.get(CG, headers=HDR, timeout=30).json()
     rows = []
+    sources: dict[str, int] = {}
     for c in mk:
         sym = (c.get("symbol") or "").lower()
         if sym in STABLE or sym in WRAPPED:
             continue
         if (c.get("market_cap") or 0) < 5e8:
             continue
-        k = candles(sym.upper())
-        time.sleep(0.12)
-        if not k:
+        got = candles(sym.upper(), c.get("id") or "")
+        if not got:
             continue
-
-        closes = [x[2] for x in k]
-        lows = [x[4] for x in k]
+        (closes, lows), used = got
+        sources[used] = sources.get(used, 0) + 1
         price = closes[-1]
         lo52 = min(lows)
         rets = [closes[i] / closes[i - 1] - 1 for i in range(1, len(closes))]
@@ -104,6 +142,7 @@ def main() -> int:
               f"{r['v30']:4.0f}/{r['v1y']:4.0f}")
     print(f"\n{len(rows)} coins scanned, "
           f"{sum(1 for r in rows if r['score'] == 4)} at 4/4")
+    print("sources:", ", ".join(f"{k} {v}" for k, v in sources.items()))
     return 0
 
 
