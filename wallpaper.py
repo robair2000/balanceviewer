@@ -256,26 +256,17 @@ def plan_actions(cur: dict, prev: dict | None) -> list[tuple[str, str]]:
 
 
 def render_plan(img: Image.Image, d: ImageDraw.ImageDraw, plan: dict,
-                balance_box: tuple[int, int, int, int],
-                on_left: bool = True) -> None:
-    """Draw the saxoBot panel beside the balance panel."""
+                left_x: int, top_y: int, pad_w: int = 300) -> int:
+    """Draw the saxoBot panel at an explicit position."""
     cur = plan["current"]
     rows = cur.get("rows") or []
     reason = str(cur.get("reason") or "")
     stale = str(cur.get("month", "")) != datetime.now().strftime("%Y-%m")
 
-    pad_w = 300
     pad_h = 74 + 20 * max(len(rows), 1) + (12 if reason else 0) + 10
 
-    bx0, by0, _bx1, _by1 = balance_box
-    gap = 18
-    if on_left:
-        x1 = bx0 - gap
-        x0 = x1 - pad_w
-    else:
-        x0 = _bx1 + gap
-        x1 = x0 + pad_w
-    y0 = by0
+    x0, x1 = left_x, left_x + pad_w
+    y0 = top_y
     y1 = y0 + pad_h
 
     frosted_panel(img, (x0, y0, x1, y1), 16)
@@ -862,21 +853,20 @@ def render(data: dict, bg_path: Path | None = None, corner: str = "tr",
             d.text((x1 - 20 - val_w, py - 1), value, font=f_row_val, fill=row["value_fill"])
         py += 20
 
-    if plan:
-        render_plan(img, d, plan, (x0, y0, x1, y1), on_left=corner.endswith("r"))
-
     if positions:
         bottom = render_positions(img, d, positions, prices or {}, x1, y1 + 16,
                                   fx=fx)
     else:
         bottom = y1 + 16
-    render_thesis(img, d, metrics or {}, x1, bottom + 16)
-    watch_bottom = bottom + 16 + (56 + 19 * 3 + 25) if metrics else bottom + 16
+    thesis_bottom = render_thesis(img, d, metrics or {}, x1, bottom + 16)
+    watch_bottom = thesis_bottom
     if watch:
-        render_watchlist(img, d, watch, watch_rules or {}, x1,
-                         watch_bottom + 16)
+        watch_bottom = render_watchlist(img, d, watch, watch_rules or {}, x1,
+                                        thesis_bottom + 16)
+    if plan:
+        render_plan(img, d, plan, x1 - 336, watch_bottom + 16, pad_w=336)
 
-    check_x1 = x0 - 18 - 300 - 18
+    check_x1 = x0 - 40
     check_bottom = render_checklist(img, d, check_x1, y0)
     crypto_bottom = check_bottom + 16
     if crypto:
