@@ -770,7 +770,9 @@ def render_etfs(img: Image.Image, d: ImageDraw.ImageDraw, rows: list[dict],
 
     py += 18
     for r in rows:
-        d.text((px, py), fit_text(d, str(r["name"]), f_row, pad_w - 200),
+        short = str(r["ticker"]).split(".")[0]
+        label = f"{short} {r['name']}"
+        d.text((px, py), fit_text(d, label, f_row, pad_w - 200),
                font=f_row, fill=(200, 209, 224))
         d.text((x1 - 175, py), f"{float(r['price']):.2f}", font=f_val,
                fill=(180, 190, 210))
