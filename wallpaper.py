@@ -603,8 +603,7 @@ def render_watchlist(img: Image.Image, d: ImageDraw.ImageDraw,
     d.ellipse([px, py + 2, px + 5, py + 7], fill=(56, 189, 248))
     draw_tracked(d, (px + 11, py - 1), "WATCHLIST", f_label, (190, 200, 220),
                  tracking=2.0)
-    tag = (f"P/E<{pe_max:.0f} · -{dd_min:.0f}% high" if pe_max
-           else f"buy at -{dd_min:.0f}% from high")
+    tag = (f"P/E<{pe_max:.0f} · bottoming" if pe_max else "bottoming")
     d.text((x1 - 20 - d.textlength(tag, font=f_small), py), tag,
            font=f_small, fill=(150, 162, 184))
 
@@ -612,28 +611,23 @@ def render_watchlist(img: Image.Image, d: ImageDraw.ImageDraw,
     for r in rows:
         dd = (r["price"] / r["high"] - 1) * 100
         pe = r.get("pe")
-        buy = (pe is not None and pe_max and 4 <= pe <= pe_max
-               and dd <= -dd_min)
-        near = (pe is not None and pe_max and pe <= pe_max * 1.10
-                and dd <= -(dd_min - 5))
+        score = int(r.get("score", 0))
 
         name = f"{r['ticker'].split('.')[0]} {r['name']}"
-        d.text((px, py), fit_text(d, name, f_row, pad_w - 130),
+        d.text((px, py), fit_text(d, name, f_row, pad_w - 150),
                font=f_row, fill=(200, 209, 224))
 
-        left = f"{pe:.0f}x" if pe else "-"
-        d.text((x1 - 105, py), left, font=f_val, fill=(180, 190, 210))
-        d.text((x1 - 75, py), f"{dd:+.0f}%", font=f_val,
-               fill=GREEN if dd > -10 else (245, 158, 11) if dd > -dd_min
+        d.text((x1 - 128, py), f"{pe:.0f}x" if pe else "-", font=f_val,
+               fill=(180, 190, 210))
+        d.text((x1 - 95, py), f"{dd:+.0f}%", font=f_val,
+               fill=GREEN if dd > -10 else (245, 158, 11) if dd > -30
                else (239, 107, 107))
-        if buy:
-            txt, fill = "BUY", GREEN
-        elif near:
-            txt, fill = "near", (245, 158, 11)
-        else:
-            txt, fill = "", (120, 132, 152)
-        d.text((x1 - 20 - d.textlength(txt, font=f_val), py), txt,
-               font=f_val, fill=fill)
+
+        dots = "".join("\u25cf" if i < score else "\u25cb" for i in range(4))
+        colour = GREEN if score == 4 else ((245, 158, 11) if score == 3
+                                           else (120, 132, 152))
+        d.text((x1 - 20 - d.textlength(dots, font=f_val), py), dots,
+               font=f_val, fill=colour)
         py += 18
 
     return y1

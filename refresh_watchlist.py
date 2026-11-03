@@ -11,6 +11,8 @@ Writes watchlist.json (max 12 names) and appends to watchlist_log.txt.
 from __future__ import annotations
 
 import json
+import math
+import statistics
 import sys
 import time
 from datetime import date
@@ -149,9 +151,29 @@ def check(sym: str) -> dict | None:
     ey = 100.0 / float(fpe)
     med = median_pe(t, info)
     rel = (float(fpe) / med) if med and med > 0 else None
+
+    # bottoming score: deep, near the low, turning, basing
+    closes = [float(x) for x in h.values]
+    low52 = min(closes)
+    from_low = closes[-1] / low52 - 1
+    rs = [closes[i] / closes[i - 1] - 1 for i in range(1, len(closes))]
+    r30 = closes[-1] / closes[-31] - 1 if len(closes) > 31 else 0.0
+
+    def vol(xs):
+        if len(xs) < 5:
+            return float("nan")
+        return statistics.pstdev(xs) * math.sqrt(252)
+
+    v30, v1y = vol(rs[-30:]), vol(rs)
+    checks = [dd <= -0.30, from_low <= 0.25, r30 > 0,
+              v30 == v30 and v1y == v1y and v30 < 0.85 * v1y]
+    score = sum(checks)
+
     return {"ticker": sym, "name": info.get("shortName") or sym,
             "sector": info.get("sector") or "?",
             "pe": float(fpe), "ey": ey, "dd": dd * 100,
+            "from_low": from_low * 100, "r30": r30 * 100,
+            "score": score, "checks": checks,
             "med": med, "rel": rel, "roe": roe, "cagr": cagr}
 
 
@@ -189,7 +211,7 @@ def main() -> int:
         time.sleep(0.15)                 # stay under Yahoo's rate limit
         print(f"{i}/{len(tickers)}", end="\r", flush=True)
 
-    rows.sort(key=lambda r: (0 if r["buy"] else 1,
+    rows.sort(key=lambda r: (-r["score"],
                              r["rel"] if r["rel"] is not None else 99))
     keep: list[dict] = []
     per_sector: dict[str, int] = {}
@@ -204,11 +226,12 @@ def main() -> int:
     rules = {"risk_free": round(rf, 2), "pe_max": round(pe_max, 1),
              "drawdown_min": DRAWDOWN_MIN, "asof": str(date.today())}
     if args.no_write:
-        print(f"\nTEST RUN: {len(rows)} passed quality, "
-              f"{sum(r['buy'] for r in rows)} at BUY")
+        print(f"\nTEST RUN: {len(rows)} passed quality")
         for r in keep:
-            print(f"  {r['ticker']:10s} {r['name'][:26]:26s} {r['pe']:5.1f}x  "
-                  f"dd {r['dd']:+5.0f}%  rel {r.get('rel')}")
+            print(f"  {r['ticker']:10s} {r['name'][:24]:24s} {r['pe']:5.1f}x  "
+                  f"dd {r['dd']:+5.0f}%  low {r['from_low']:+4.0f}%  "
+                  f"30d {r['r30']:+5.0f}%  {r['score']}/4  "
+                  f"rel {r.get('rel')}")
         return 0
 
     OUT.write_text(json.dumps({"rules": rules, "names": keep}, indent=1),
@@ -217,10 +240,11 @@ def main() -> int:
     lines = [f"{date.today()} refresh: {len(rows)} passed quality, "
              f"{sum(r['buy'] for r in rows)} at BUY, kept {len(keep)}"]
     for r in keep:
-        flag = "BUY" if r["buy"] else ("near" if r["near"] else "")
         rel = f"{r['rel']:.2f}x own median" if r.get("rel") else "-"
         lines.append(f"  {r['ticker']:10s} {r['name'][:26]:26s} "
-                     f"{r['pe']:5.1f}x  dd {r['dd']:+5.0f}%  {rel:16s} {flag}")
+                     f"{r['pe']:5.1f}x  dd {r['dd']:+5.0f}%  "
+                     f"low {r['from_low']:+4.0f}%  30d {r['r30']:+5.0f}%  "
+                     f"{r['score']}/4  {rel}")
     LOG.write_text(("\n".join(lines) + "\n"), encoding="utf-8")
 
     print("\n" + "\n".join(lines))
