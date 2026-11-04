@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-04T07:57+00:00",
+ "generated": "2026-11-04T09:03+00:00",
  "alerts": [
   {
    "ticker": "BSL.DE",
@@ -7,6 +7,13 @@
    "kind": "EARNINGS",
    "source": "EQS",
    "text": "9-Monatsergebnis 2026: Basler steigert Umsatz und Ergebnis deutlich, Prognose f\u00fcr 2026 angehoben (EQS Group (DE))"
+  },
+  {
+   "ticker": "TER",
+   "date": "2026-11-04",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Should Earnings Beat Require Action From Teradyne (TER) Investors? - Simply Wall St"
   },
   {
    "ticker": "TEM",
@@ -20,21 +27,7 @@
    "date": "2026-11-03",
    "kind": "EARNINGS",
    "source": "news",
-   "text": "AppLovin Fell 60% Even With Today\u2019s Pop. Tomorrow We Learn if Earnings Fell With It - TIKR.com"
-  },
-  {
-   "ticker": "APP",
-   "date": "2026-11-03",
-   "kind": "EARNINGS",
-   "source": "news",
-   "text": "AppLovin Rallies 6% Ahead of Earnings as Beaten-Down Ad-Tech Stocks Rebound; Unity Climbs 4%, The Trade Desk Edges Highe"
-  },
-  {
-   "ticker": "APP",
-   "date": "2026-11-03",
-   "kind": "EARNINGS",
-   "source": "news",
-   "text": "Polymarket Odds: Will APP, UBER, MCD Beat Earnings Tomorrow? - TipRanks"
+   "text": "Bear Call Spread Ideas for Applovin Earnings - Barchart.com"
   },
   {
    "ticker": "APP",
@@ -93,25 +86,11 @@
    "text": "Tempus AI faces profitability test as earnings loom Monday - Investing.com"
   },
   {
-   "ticker": "APP",
+   "ticker": "GBF.DE",
    "date": "2026-11-02",
-   "kind": "EARNINGS",
+   "kind": "UPGRADE",
    "source": "news",
-   "text": "Should AppLovin Stock Be in Your Portfolio Before Q3 Earnings? - Zacks Investment Research"
-  },
-  {
-   "ticker": "RMD",
-   "date": "2026-11-02",
-   "kind": "EARNINGS",
-   "source": "news",
-   "text": "ResMed Inc. Just Recorded A 13% EPS Beat: Here's What Analysts Are Forecasting Next - Simply Wall St"
-  },
-  {
-   "ticker": "APP",
-   "date": "2026-11-01",
-   "kind": "EARNINGS",
-   "source": "news",
-   "text": "AppLovin Stock Is Struggling: 3 Things to Watch in Q3 Earnings That Could Get APP Back on Track - Barchart.com"
+   "text": "Bilfinger SE (0NRG.L) Analyst insights, Price targets and Recommendations - Yahoo Finance Australia"
   },
   {
    "ticker": "NFLX",
@@ -132,7 +111,21 @@
    "date": "2026-10-30",
    "kind": "EARNINGS",
    "source": "news",
+   "text": "ResMed Earnings: Volume Drives Solid Start, but Some Earnings Benefits Will Reverse - Morningstar"
+  },
+  {
+   "ticker": "RMD",
+   "date": "2026-10-30",
+   "kind": "EARNINGS",
+   "source": "news",
    "text": "ResMed Inc. Q1 2027 Earnings Call Summary - Yahoo Finance"
+  },
+  {
+   "ticker": "RMD",
+   "date": "2026-10-30",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "ResMed Inc. 2027 Q1 - Results - Earnings Call Presentation (NYSE:RMD) 2026-10-30 - Seeking Alpha"
   },
   {
    "ticker": "RMD",
@@ -184,39 +177,11 @@
    "text": "8-K 2.02,8.01,9.01"
   },
   {
-   "ticker": "RMD",
-   "date": "2026-10-29",
-   "kind": "EARNINGS",
-   "source": "news",
-   "text": "ResMed Fiscal Q1 Non-GAAP Earnings, Revenue Up - marketscreener.com"
-  },
-  {
-   "ticker": "RMD",
-   "date": "2026-10-29",
-   "kind": "EARNINGS",
-   "source": "news",
-   "text": "ResMed Fiscal Q1 Adjusted Earnings, Revenue Rise - www.marketscreener.com"
-  },
-  {
    "ticker": "TER",
    "date": "2026-10-28",
    "kind": "EARNINGS",
    "source": "SEC 8-K",
    "text": "8-K 2.02,9.01"
-  },
-  {
-   "ticker": "TER",
-   "date": "2026-10-28",
-   "kind": "EARNINGS",
-   "source": "news",
-   "text": "Teradyne Earnings: AI-Led, but Diversified Growth Looks Positive, and Shares Look Undervalued - Morningstar"
-  },
-  {
-   "ticker": "TER",
-   "date": "2026-10-28",
-   "kind": "EARNINGS",
-   "source": "news",
-   "text": "Teradyne stock falls despite Q3 earnings beat, strong AI-driven outlook (TER:NASDAQ) - Seeking Alpha"
   },
   {
    "ticker": "TER",
@@ -230,21 +195,14 @@
    "date": "2026-10-28",
    "kind": "EARNINGS",
    "source": "news",
-   "text": "Teradyne, Inc. Q3 2026 Earnings Call Summary - Yahoo Finance"
+   "text": "Teradyne Q3 Earnings Beat Estimates, Revenues Increase Year over Year - Yahoo Finance Australia"
   },
   {
-   "ticker": "TER",
+   "ticker": "APP",
    "date": "2026-10-28",
    "kind": "EARNINGS",
    "source": "news",
-   "text": "Teradyne Inc (TER) Q3 2026 Earnings Call Highlights: AI-Driven Revenue Tops 60% as Sales Surge ... - Yahoo Finance"
-  },
-  {
-   "ticker": "GBF.DE",
-   "date": "2026-10-28",
-   "kind": "CONTRACT",
-   "source": "news",
-   "text": "Bilfinger : secures \u00a322m contract extension to drive efficiency and reliability at life science facility in Scotland - w"
+   "text": "AppLovin (APP) Earnings Expected to Grow: Should You Buy? - Yahoo Finance"
   },
   {
    "ticker": "RMBS",

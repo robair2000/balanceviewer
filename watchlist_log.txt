@@ -1,13 +1,13 @@
-2026-11-03 refresh: 110 passed quality, 28 at BUY, kept 12
+2026-11-04 refresh: 109 passed quality, 27 at BUY, kept 12
   DECK       Deckers Outdoor Corporatio  10.3x  dd   -30%  low   +8%  30d    +5%  4/4  0.51x own median
-  PGHN.SW    PARTNERS GROUP N            14.4x  dd   -37%  low  +12%  30d    +6%  4/4  0.64x own median
-  GBF.DE     Bilfinger SE                10.8x  dd   -51%  low  +11%  30d    +5%  4/4  0.70x own median
+  GBF.DE     Bilfinger SE                10.9x  dd   -51%  low  +12%  30d    +5%  4/4  0.70x own median
   APP        Applovin Corporation        12.3x  dd   -67%  low   +7%  30d   -25%  3/4  0.18x own median
-  R3NK.DE    RENK Group AG               17.5x  dd   -44%  low   +9%  30d   -10%  3/4  0.40x own median
+  R3NK.DE    RENK Group AG               17.1x  dd   -46%  low   +6%  30d   -13%  3/4  0.39x own median
   NFLX       Netflix, Inc.               16.8x  dd   -45%  low   +2%  30d   -12%  3/4  0.44x own median
-  FRES.L     FRESNILLO PLC ORD USD0.50   10.6x  dd   -49%  low   +7%  30d   -24%  3/4  0.49x own median
+  FRES.L     FRESNILLO PLC ORD USD0.50   10.9x  dd   -47%  low  +10%  30d   -21%  3/4  0.50x own median
   RMBS       Rambus, Inc.                22.7x  dd   -48%  low  +11%  30d   -16%  3/4  0.72x own median
-  MONC.MI    MONCLER                     17.8x  dd   -21%  low   +7%  30d    +2%  3/4  0.82x own median
+  MONC.MI    MONCLER                     17.9x  dd   -21%  low   +7%  30d    +3%  3/4  0.82x own median
+  AXFO.ST    Axfood AB                   22.3x  dd   -15%  low  +25%  30d    +9%  3/4  0.98x own median
   ADBE       Adobe Inc.                   9.0x  dd   -31%  low  +27%  30d    +3%  2/4  0.24x own median
-  HOC.L      HOCHSCHILD MINING PLC ORD    7.2x  dd   -47%  low  +36%  30d   -28%  2/4  0.54x own median
-  RMD        ResMed Inc.                 17.2x  dd   -17%  low  +25%  30d    +2%  2/4  0.56x own median
+  RMD        ResMed Inc.                 17.1x  dd   -17%  low  +25%  30d    +2%  2/4  0.56x own median
+  HOC.L      HOCHSCHILD MINING PLC ORD    7.4x  dd   -45%  low  +41%  30d   -25%  2/4  0.56x own median

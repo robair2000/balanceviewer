@@ -558,7 +558,8 @@ def read_watchlist() -> tuple[dict, list[dict]]:
         try:
             out.append({"ticker": str(n["ticker"]),
                         "name": str(n.get("name", n["ticker"])),
-                        "pe": n.get("pe")})
+                        "pe": n.get("pe"),
+                        "score": n.get("score")})
         except (KeyError, TypeError):
             continue
     return rules, out
@@ -628,7 +629,7 @@ def render_watchlist(img: Image.Image, d: ImageDraw.ImageDraw,
     for r in rows:
         dd = (r["price"] / r["high"] - 1) * 100
         pe = r.get("pe")
-        score = int(r.get("score", 0))
+        score = int(r.get("score") or 0)
 
         name = f"{r['ticker'].split('.')[0]} {r['name']}"
         d.text((px, py), fit_text(d, name, f_row, pad_w - 150),
