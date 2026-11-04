@@ -1,7 +1,12 @@
 """Catalyst scan: published events on the names we own or watch.
 
 US names  -> SEC EDGAR 8-K item codes (2.02 results, 1.01 material agreements)
+EU names  -> finanznachrichten.de (EQS/DGAP ad-hocs, read straight off the wire)
 All names -> Google News RSS headlines, keyword-classified and date-filtered
+
+German ad-hocs index on Google News with a lag of hours, which is why Basler's
+06:51 nine-month report never reached the card on the morning it was published.
+The EU source exists to close that gap.
 
 It detects catalysts that have been *published*. It cannot front-run them: by
 the time a story is indexed, the move is usually in the price.
@@ -11,7 +16,7 @@ from __future__ import annotations
 import json
 import re
 import xml.etree.ElementTree as ET
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 from pathlib import Path
 
@@ -21,6 +26,31 @@ ROOT = Path(__file__).resolve().parent
 OUT = ROOT / "alerts.json"
 HDR = {"User-Agent": "catalyst-scan research contact: robai@example.com"}
 NEWS_HDR = {"User-Agent": "Mozilla/5.0 research"}
+BROWSER_HDR = {"User-Agent": ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                              "AppleWebKit/537.36 (KHTML, like Gecko) "
+                              "Chrome/124.0 Safari/537.36"),
+               "Accept-Language": "de-DE,de;q=0.9,en;q=0.8"}
+
+# ticker -> finanznachrichten page slug; add a name here to cover it
+EU_SLUGS = {
+    "BSL.DE": "basler-ag",
+    "GBF.DE": "bilfinger-se",
+    "R3NK.DE": "renk-group-ag",
+    "PGHN.SW": "partners-group-holding-ag",
+    "MONC.MI": "moncler-spa",
+    "FRES.L": "fresnillo-plc",
+    "HOC.L": "hochschild-mining-plc",
+}
+EU_ROW = re.compile(r'<td class="zentriert">([^<]{1,12})</td><td class="zl">'
+                    r'<a href="([^"]+)"[^>]*?title="([^"]+)"')
+# voting-rights notices and directors' dealings are filings, not catalysts
+EU_SKIP = re.compile(r"^(EQS-PVR|EQS-DD|EQS-Stimmrechte|DGAP-Stimmrechte)|"
+                     r"Release according to Article 40|Managers' transactions",
+                     re.I)
+# "Basler Aktiengesellschaft: 9-Monatsergebnis ..." -> "9-Monatsergebnis ..."
+EU_PREFIX = re.compile(r"^[A-ZÄÖÜ][\w&.\- ]{2,40}?(?:Aktiengesellschaft|AG|SE|"
+                       r"Inc\.?|PLC|S\.p\.A\.|Holding|Group|Corporation|N\.V\.)"
+                       r"\s*:\s*")
 
 DAYS_NEWS = 7
 DAYS_FILING = 14
@@ -33,11 +63,18 @@ KINDS = [
         r"q[1-4] (results|earnings)|quarterly (results|earnings)|"
         r"preliminary (\d+|nine|six|three|twelve)-month|"
         r"(annual|full-year|half-year|nine-month) (results?|forecast)|"
-        r"earnings|profit (jump|surge|fall)", re.I)),
+        r"earnings|profit (jump|surge|fall)|"
+        # German wire wording
+        r"monats(ergebnis|zahlen)|halbjahres|quartals(ergebnis|zahlen)|"
+        r"geschäftszahlen|hebt (die |seine )?prognose|"
+        r"prognose (angehoben|erhöht|gesenkt)|ergebnis deutlich", re.I)),
     ("CONTRACT", re.compile(r"\b(contract|order|agreement|customer|deal|wins?|"
-                            r"award|partnership)\b", re.I)),
+                            r"award|partnership)\b|"
+                            r"auftrag|rahmenvertrag|kooperation|"
+                            r"vertrag (über|mit)|großauftrag", re.I)),
     ("UPGRADE", re.compile(r"price target|upgrade|downgrade|buy rating|overweight|"
-                           r"initiates coverage", re.I)),
+                           r"initiates coverage|kursziel|hochgestuft|"
+                           r"herabgestuft|stuft .{0,25} (auf|hoch|runter)", re.I)),
 ]
 
 ITEM_KIND = {"2.02": "EARNINGS", "1.01": "CONTRACT", "7.01": "UPDATE",
@@ -46,7 +83,8 @@ ITEM_KIND = {"2.02": "EARNINGS", "1.01": "CONTRACT", "7.01": "UPDATE",
 NOISE = re.compile(
     r"stock price|price, news|quote & history|tradingview|yahoo! finance|"
     r"marketbeat|acquires new stake|new stake|holdings|insider|shares outstanding|"
-    r"analyst estimates|consensus|transcript|notification of|form 4|form 13",
+    r"analyst estimates|consensus|transcript|notification of|form 4|form 13|"
+    r"nebenwerte-tag|marktbericht",          # daily roundups, not one-name news
     re.I)
 KEEP = {"EARNINGS", "CONTRACT", "UPGRADE"}
 
@@ -146,6 +184,56 @@ def news(ticker: str, name: str) -> list[dict]:
     return out
 
 
+def de_date(cell: str) -> str | None:
+    """'08:18' is today's row; '30.10.' / '30.10.2026' are older ones."""
+    cell = cell.strip().rstrip(".")
+    today = datetime.now(timezone.utc).date()
+    if re.fullmatch(r"\d{1,2}:\d{2}", cell):
+        return today.isoformat()
+    m = re.fullmatch(r"(\d{1,2})\.(\d{1,2})\.(\d{4})?", cell)
+    if not m:
+        return None
+    day, month = int(m.group(1)), int(m.group(2))
+    year = int(m.group(3)) if m.group(3) else today.year
+    try:
+        d = date(year, month, day)
+    except ValueError:
+        return None
+    if not m.group(3) and d > today:            # "30.12." seen in January
+        try:
+            d = date(year - 1, month, day)
+        except ValueError:
+            return None
+    return d.isoformat()
+
+
+def de_news(ticker: str, slug: str) -> list[dict]:
+    """Ad-hocs from the German wire, in German, same day they are published."""
+    try:
+        r = requests.get(
+            f"https://www.finanznachrichten.de/nachrichten-aktien/{slug}.htm",
+            headers=BROWSER_HDR, timeout=20)
+        r.raise_for_status()
+    except Exception:                                      # noqa: BLE001
+        return []
+
+    cutoff = (datetime.now(timezone.utc) - timedelta(days=DAYS_NEWS)).date()
+    out = []
+    for cell, _link, title in EU_ROW.findall(r.text):
+        d = de_date(cell)
+        if d is None or date.fromisoformat(d) < cutoff:
+            continue
+        headline = re.sub(r"\s*\([^()]*\)\s*$", "", title).strip()
+        headline = re.sub(r"^(EQS-News|EQS-Adhoc|DGAP-News|DGAP-Adhoc):\s*",
+                          "", headline)
+        headline = EU_PREFIX.sub("", headline).strip()
+        if not headline or EU_SKIP.search(headline) or NOISE.search(headline):
+            continue
+        out.append({"ticker": ticker, "date": d, "kind": classify(headline),
+                    "source": "EQS", "text": headline[:120]})
+    return out
+
+
 def main() -> int:
     tickers = load_tickers()
     ciks = sec_map()
@@ -153,6 +241,8 @@ def main() -> int:
     for t, name in tickers.items():
         if t in ciks:
             alerts += filings(t, ciks[t])
+        if t in EU_SLUGS:
+            alerts += de_news(t, EU_SLUGS[t])
         alerts += news(t, name.split(" ")[0] if len(name) > 18 else name)
 
     seen, uniq = set(), []

@@ -1,12 +1,12 @@
 {
- "generated": "2026-11-04T07:42+00:00",
+ "generated": "2026-11-04T07:57+00:00",
  "alerts": [
   {
-   "ticker": "R3NK.DE",
+   "ticker": "BSL.DE",
    "date": "2026-11-04",
-   "kind": "CONTRACT",
-   "source": "news",
-   "text": "Renk Heads to Euronaval With a Signed Submarine Order and a \u00a3700 Million Question Mark - ad-hoc-news.de"
+   "kind": "EARNINGS",
+   "source": "EQS",
+   "text": "9-Monatsergebnis 2026: Basler steigert Umsatz und Ergebnis deutlich, Prognose f\u00fcr 2026 angehoben (EQS Group (DE))"
   },
   {
    "ticker": "TEM",
@@ -20,7 +20,21 @@
    "date": "2026-11-03",
    "kind": "EARNINGS",
    "source": "news",
-   "text": "Bear Call Spread Ideas for Applovin Earnings - Barchart.com"
+   "text": "AppLovin Fell 60% Even With Today\u2019s Pop. Tomorrow We Learn if Earnings Fell With It - TIKR.com"
+  },
+  {
+   "ticker": "APP",
+   "date": "2026-11-03",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "AppLovin Rallies 6% Ahead of Earnings as Beaten-Down Ad-Tech Stocks Rebound; Unity Climbs 4%, The Trade Desk Edges Highe"
+  },
+  {
+   "ticker": "APP",
+   "date": "2026-11-03",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Polymarket Odds: Will APP, UBER, MCD Beat Earnings Tomorrow? - TipRanks"
   },
   {
    "ticker": "APP",
@@ -28,41 +42,6 @@
    "kind": "EARNINGS",
    "source": "news",
    "text": "Earnings Preview: AppLovin Stock Bounces Off 52-Week Lows - Schaeffer's Investment Research"
-  },
-  {
-   "ticker": "R3NK.DE",
-   "date": "2026-11-03",
-   "kind": "UPGRADE",
-   "source": "news",
-   "text": "Renk Keeps Buy Ratings Intact as Two Banks Cut Their Price Targets - ad-hoc-news.de"
-  },
-  {
-   "ticker": "R3NK.DE",
-   "date": "2026-11-03",
-   "kind": "CONTRACT",
-   "source": "news",
-   "text": "Renk Books a Saab Submarine Order While Asking Investors to Read Its \u00a3700 Million Naval Pipeline Ca - ad-hoc-news.de"
-  },
-  {
-   "ticker": "R3NK.DE",
-   "date": "2026-11-03",
-   "kind": "CONTRACT",
-   "source": "news",
-   "text": "Renk Completes Huddersfield Naval Buy as Saab Submarine Order Puts Real Revenue Behind the Pitch - ad-hoc-news.de"
-  },
-  {
-   "ticker": "R3NK.DE",
-   "date": "2026-11-03",
-   "kind": "CONTRACT",
-   "source": "news",
-   "text": "Renk Redraws Its Own Map: Huddersfield In, Plain Bearings Out, Saab Order on the Board - ad-hoc-news.de"
-  },
-  {
-   "ticker": "R3NK.DE",
-   "date": "2026-11-03",
-   "kind": "CONTRACT",
-   "source": "news",
-   "text": "Renk Adds Submarine Drive Capability With Huddersfield Deal as Saab Order Backs Naval Push - ad-hoc-news.de"
   },
   {
    "ticker": "TEM",
@@ -114,11 +93,11 @@
    "text": "Tempus AI faces profitability test as earnings loom Monday - Investing.com"
   },
   {
-   "ticker": "HOC.L",
+   "ticker": "APP",
    "date": "2026-11-02",
-   "kind": "UPGRADE",
+   "kind": "EARNINGS",
    "source": "news",
-   "text": "Barclays Reduces Hochschild Mining PT, Affirms at Overweight - www.marketscreener.com"
+   "text": "Should AppLovin Stock Be in Your Portfolio Before Q3 Earnings? - Zacks Investment Research"
   },
   {
    "ticker": "RMD",
@@ -126,6 +105,13 @@
    "kind": "EARNINGS",
    "source": "news",
    "text": "ResMed Inc. Just Recorded A 13% EPS Beat: Here's What Analysts Are Forecasting Next - Simply Wall St"
+  },
+  {
+   "ticker": "APP",
+   "date": "2026-11-01",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "AppLovin Stock Is Struggling: 3 Things to Watch in Q3 Earnings That Could Get APP Back on Track - Barchart.com"
   },
   {
    "ticker": "NFLX",
@@ -188,7 +174,7 @@
    "date": "2026-10-29",
    "kind": "EARNINGS",
    "source": "news",
-   "text": "Rambus Inc. Just Beat Analyst Forecasts, And Analysts Have Been Updating Their Predictions - Simply Wall St"
+   "text": "Rambus Inc. Just Beat EPS By 7.1%: Here's What Analysts Think Will Happen Next - Moomoo"
   },
   {
    "ticker": "RMD",
@@ -259,13 +245,6 @@
    "kind": "CONTRACT",
    "source": "news",
    "text": "Bilfinger : secures \u00a322m contract extension to drive efficiency and reliability at life science facility in Scotland - w"
-  },
-  {
-   "ticker": "APP",
-   "date": "2026-10-28",
-   "kind": "EARNINGS",
-   "source": "news",
-   "text": "AppLovin (APP) Earnings Expected to Grow: Should You Buy? - Yahoo Finance"
   },
   {
    "ticker": "RMBS",
