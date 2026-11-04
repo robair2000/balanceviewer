@@ -363,9 +363,27 @@ def last_prices(tickers: list[str]) -> dict[str, float]:
         for t in tickers:
             if t in d.columns and d[t].notna().any():
                 out[t] = float(d[t].dropna().iloc[-1])
-        return out
     except Exception:                                  # noqa: BLE001
         return {}
+
+    # the daily bar can be missing or stale while the session is open, which
+    # makes a position look 8% wrong; the intraday bar always has the live price
+    try:
+        import pandas as pd
+        import yfinance as yf
+
+        intraday = yf.download(tickers, period="1d", interval="5m",
+                               progress=False, auto_adjust=True)["Close"]
+        if isinstance(intraday, pd.Series):
+            intraday = intraday.to_frame(tickers[0])
+        for t in tickers:
+            if t in intraday.columns:
+                s = intraday[t].dropna()
+                if len(s):
+                    out[t] = float(s.iloc[-1])
+    except Exception:                                  # noqa: BLE001
+        pass
+    return out
 
 
 def usd_per_eur() -> float:

@@ -19,11 +19,13 @@ FILE = HERE / "basler_metrics.json"
 def main() -> int:
     ap = argparse.ArgumentParser(description="Basler thesis metrics")
     ap.add_argument("--orders", type=float,
-                    help="incoming orders, year-on-year, percent (e.g. 62)")
+                    help="incoming orders, year-on-year, in percent (e.g. 62)")
     ap.add_argument("--margin", type=float,
-                    help="gross margin, percent (e.g. 49)")
-    ap.add_argument("--ebit-low", type=float, help="EBIT margin guide, low end %")
-    ap.add_argument("--ebit-high", type=float, help="EBIT margin guide, high end %")
+                    help="gross margin, in percent (e.g. 49)")
+    ap.add_argument("--ebit-low", type=float,
+                    help="EBIT margin guide, low end, in percent")
+    ap.add_argument("--ebit-high", type=float,
+                    help="EBIT margin guide, high end, in percent")
     ap.add_argument("--guidance", choices=["raised", "intact", "cut"])
     ap.add_argument("--next", help="next report date, YYYY-MM-DD")
     ap.add_argument("--asof", default=str(date.today()))
