@@ -191,12 +191,22 @@ def check(sym: str) -> dict | None:
               v30 == v30 and v1y == v1y and v30 < 0.85 * v1y]
     score = sum(checks)
 
+    # "in the box": deep, near the low, quiet, flat, and not yet bounced.
+    # This is the state PGHN sat in from 13 to 26 October - the signal has to
+    # fire here, not when the turning check finally passes.
+    ma20 = sum(closes[-20:]) / 20 if len(closes) >= 20 else closes[-1]
+    ma50 = sum(closes[-50:]) / 50 if len(closes) >= 50 else closes[-1]
+    zone = bool(dd <= -0.30 and from_low <= 0.20 and 28 <= r14 <= 58
+                and v30 == v30 and v1y == v1y and v30 < 0.85 * v1y
+                and abs(closes[-1] / ma20 - 1) <= 0.06
+                and closes[-1] < ma50)
+
     return {"ticker": sym, "name": info.get("shortName") or sym,
             "sector": info.get("sector") or "?",
             "pe": float(fpe), "ey": ey, "dd": dd * 100,
             "from_low": from_low * 100, "r30": r30 * 100,
             "rsi": r14, "from_30d_low": from_30d_low * 100,
-            "score": score, "checks": checks,
+            "score": score, "checks": checks, "zone": zone,
             "med": med, "rel": rel, "roe": roe, "cagr": cagr}
 
 
@@ -246,6 +256,18 @@ def main() -> int:
         if len(keep) >= MAX_NAMES:
             break
 
+    # zone entries since the previous scan, so a name that has just started
+    # basing can be flagged instead of only appearing once it has turned
+    prev_zone: set[str] = set()
+    try:
+        prev = json.loads(OUT.read_text(encoding="utf-8"))
+        prev_zone = set(prev.get("zone") or [])
+    except Exception:                                  # noqa: BLE001
+        prev_zone = set()
+    now_zone = [r["ticker"] for r in keep if r.get("zone")]
+    for r in keep:
+        r["new_zone"] = bool(r.get("zone") and r["ticker"] not in prev_zone)
+
     rules = {"risk_free": round(rf, 2), "pe_max": round(pe_max, 1),
              "drawdown_min": DRAWDOWN_MIN, "asof": str(date.today())}
     if args.no_write:
@@ -254,20 +276,25 @@ def main() -> int:
             print(f"  {r['ticker']:10s} {r['name'][:24]:24s} {r['pe']:5.1f}x  "
                   f"dd {r['dd']:+5.0f}%  low {r['from_low']:+4.0f}%  "
                   f"30d {r['r30']:+5.0f}%  {r['score']}/4  "
+                  f"{'ZONE' if r.get('zone') else '    '}  "
                   f"rel {r.get('rel')}")
         return 0
 
-    OUT.write_text(json.dumps({"rules": rules, "names": keep}, indent=1),
+    OUT.write_text(json.dumps({"rules": rules, "zone": now_zone,
+                               "names": keep}, indent=1),
                    encoding="utf-8")
 
     lines = [f"{date.today()} refresh: {len(rows)} passed quality, "
-             f"{sum(r['buy'] for r in rows)} at BUY, kept {len(keep)}"]
+             f"{sum(r['buy'] for r in rows)} at BUY, kept {len(keep)}, "
+             f"{len(now_zone)} in zone"]
     for r in keep:
         rel = f"{r['rel']:.2f}x own median" if r.get("rel") else "-"
+        flags = ("ZONE " if r.get("zone") else "     ") + \
+                ("NEW " if r.get("new_zone") else "    ")
         lines.append(f"  {r['ticker']:10s} {r['name'][:26]:26s} "
                      f"{r['pe']:5.1f}x  dd {r['dd']:+5.0f}%  "
                      f"low {r['from_low']:+4.0f}%  30d {r['r30']:+5.0f}%  "
-                     f"{r['score']}/4  {rel}")
+                     f"{r['score']}/4  {flags}{rel}")
     LOG.write_text(("\n".join(lines) + "\n"), encoding="utf-8")
 
     print("\n" + "\n".join(lines))

@@ -1,26 +1,40 @@
 {
- "generated": "2026-11-05T08:32+00:00",
+ "generated": "2026-11-05T09:33+00:00",
  "alerts": [
+  {
+   "ticker": "BSL.DE",
+   "date": "2026-11-05",
+   "kind": "UPGRADE",
+   "source": "EQS",
+   "text": "JEFFERIES stuft BASLER AG auf &#39;Buy&#39;"
+  },
+  {
+   "ticker": "BSL.DE",
+   "date": "2026-11-05",
+   "kind": "UPGRADE",
+   "source": "EQS",
+   "text": "BERENBERG stuft BASLER AG auf &#39;Buy&#39;"
+  },
+  {
+   "ticker": "BSL.DE",
+   "date": "2026-11-05",
+   "kind": "UPGRADE",
+   "source": "news",
+   "text": "Basler AG : Jefferies maintains a Buy rating - www.marketscreener.com"
+  },
+  {
+   "ticker": "BSL.DE",
+   "date": "2026-11-05",
+   "kind": "UPGRADE",
+   "source": "news",
+   "text": "Basler AG : Gets a Buy rating from Berenberg - www.marketscreener.com"
+  },
   {
    "ticker": "R3NK.DE",
    "date": "2026-11-05",
    "kind": "UPGRADE",
    "source": "EQS",
    "text": "JEFFERIES stuft Renk auf &#39;Buy&#39;"
-  },
-  {
-   "ticker": "R3NK.DE",
-   "date": "2026-11-05",
-   "kind": "CONTRACT",
-   "source": "EQS",
-   "text": "Press Release: 9M 2026: RENK&#39;s order intake climbs by more than 30% with further above-average increase in adjusted "
-  },
-  {
-   "ticker": "R3NK.DE",
-   "date": "2026-11-05",
-   "kind": "CONTRACT",
-   "source": "EQS",
-   "text": "Press Release: 9M 2026: RENK&#39;s order intake -2-"
   },
   {
    "ticker": "R3NK.DE",
@@ -76,7 +90,21 @@
    "date": "2026-11-05",
    "kind": "CONTRACT",
    "source": "news",
-   "text": "Harry Kane signs new Bayern Munich contract - ESPN"
+   "text": "Harry Kane signs new Bayern Munich contract until 2029 - BBC"
+  },
+  {
+   "ticker": "NYT",
+   "date": "2026-11-05",
+   "kind": "CONTRACT",
+   "source": "news",
+   "text": "Harry Kane signs new Bayern Munich contract: 'I want to win many more titles' - ESPN"
+  },
+  {
+   "ticker": "NYT",
+   "date": "2026-11-05",
+   "kind": "CONTRACT",
+   "source": "news",
+   "text": "Harry Kane signs new Bayern Munich deal to become highest-paid player in Europe - The Athletic - The New York Times"
   },
   {
    "ticker": "NYT",
@@ -84,6 +112,27 @@
    "kind": "CONTRACT",
    "source": "news",
    "text": "Voters reject Trump\u2019s GOP as Democrats rack up wins - NBC News"
+  },
+  {
+   "ticker": "NYT",
+   "date": "2026-11-05",
+   "kind": "CONTRACT",
+   "source": "news",
+   "text": "New Jersey Powerball Player Wins $847 Million Jackpot\u2014But They'll Take Home A Much Smaller Amount - Forbes"
+  },
+  {
+   "ticker": "NYT",
+   "date": "2026-11-05",
+   "kind": "CONTRACT",
+   "source": "news",
+   "text": "New Jersey lottery player wins $847 million Powerball Jackpot - Bergen Record"
+  },
+  {
+   "ticker": "NYT",
+   "date": "2026-11-05",
+   "kind": "CONTRACT",
+   "source": "news",
+   "text": "\ud83d\udea8 Official: Harry Kane signs new Bayern deal on staggering wages! - Yahoo Sports"
   },
   {
    "ticker": "TEM",
@@ -156,6 +205,13 @@
    "text": "Corcept Therapeutics (CORT) Q3 Earnings and Revenues Surpass Estimates - Yahoo Finance UK"
   },
   {
+   "ticker": "CORT",
+   "date": "2026-11-03",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Corcept Therapeutics Incorporated Reports Earnings Results for the Third Quarter and Nine Months Ended September 30, 202"
+  },
+  {
    "ticker": "TEM",
    "date": "2026-11-02",
    "kind": "EARNINGS",
@@ -212,13 +268,6 @@
    "text": "Tempus AI (TEM) Beats Q3 Earnings and Revenue Estimates - Yahoo Finance"
   },
   {
-   "ticker": "AAF.L",
-   "date": "2026-10-30",
-   "kind": "EARNINGS",
-   "source": "news",
-   "text": "What Airtel Africa (AAF) Said on Its Q2 Earnings Call - Yahoo Finance"
-  },
-  {
    "ticker": "BSL.DE",
    "date": "2026-10-29",
    "kind": "EARNINGS",
@@ -231,27 +280,6 @@
    "kind": "UPGRADE",
    "source": "news",
    "text": "Basler AG : Jefferies reaffirms its Buy rating - www.marketscreener.com"
-  },
-  {
-   "ticker": "TER",
-   "date": "2026-10-29",
-   "kind": "EARNINGS",
-   "source": "news",
-   "text": "Teradyne Q3 Earnings Call Highlights AI Demand and 2027 Growth Plans - Yahoo Finance"
-  },
-  {
-   "ticker": "TER",
-   "date": "2026-10-28",
-   "kind": "EARNINGS",
-   "source": "SEC 8-K",
-   "text": "8-K 2.02,9.01"
-  },
-  {
-   "ticker": "RMBS",
-   "date": "2026-10-26",
-   "kind": "EARNINGS",
-   "source": "SEC 8-K",
-   "text": "8-K 2.02,9.01"
   }
  ]
 }

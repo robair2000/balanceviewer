@@ -559,7 +559,9 @@ def read_watchlist() -> tuple[dict, list[dict]]:
             out.append({"ticker": str(n["ticker"]),
                         "name": str(n.get("name", n["ticker"])),
                         "pe": n.get("pe"),
-                        "score": n.get("score")})
+                        "score": n.get("score"),
+                        "zone": bool(n.get("zone")),
+                        "new_zone": bool(n.get("new_zone"))})
         except (KeyError, TypeError):
             continue
     return rules, out
@@ -621,9 +623,11 @@ def render_watchlist(img: Image.Image, d: ImageDraw.ImageDraw,
     d.ellipse([px, py + 2, px + 5, py + 7], fill=(56, 189, 248))
     draw_tracked(d, (px + 11, py - 1), "WATCHLIST", f_label, (190, 200, 220),
                  tracking=2.0)
-    tag = (f"P/E<{pe_max:.0f} · bottoming" if pe_max else "bottoming")
+    tag = (f"P/E<{pe_max:.0f} · {sum(1 for r in rows if r.get('zone'))} in zone"
+           if pe_max else "bottoming")
     d.text((x1 - 20 - d.textlength(tag, font=f_small), py), tag,
-           font=f_small, fill=(150, 162, 184))
+           font=f_small, fill=(190, 160, 255) if any(r.get("zone") for r in rows)
+           else (150, 162, 184))
 
     py += 18
     for r in rows:
@@ -631,9 +635,18 @@ def render_watchlist(img: Image.Image, d: ImageDraw.ImageDraw,
         pe = r.get("pe")
         score = int(r.get("score") or 0)
 
+        # a filled purple dot = basing inside the box; bright ring = new entry
+        if r.get("zone"):
+            colour = (196, 130, 255) if r.get("new_zone") else (150, 96, 220)
+            d.ellipse([px, py + 4, px + 5, py + 9], fill=colour)
+            if r.get("new_zone"):
+                d.ellipse([px - 2, py + 2, px + 7, py + 11], outline=colour,
+                          width=1)
+
         name = f"{r['ticker'].split('.')[0]} {r['name']}"
-        d.text((px, py), fit_text(d, name, f_row, pad_w - 150),
-               font=f_row, fill=(200, 209, 224))
+        d.text((px + 10, py), fit_text(d, name, f_row, pad_w - 160),
+               font=f_row, fill=(215, 205, 235) if r.get("zone")
+               else (200, 209, 224))
 
         d.text((x1 - 128, py), f"{pe:.0f}x" if pe else "-", font=f_val,
                fill=(180, 190, 210))

@@ -29,7 +29,9 @@
    "roe": 0.576399049012436,
    "cagr": 0.10705138127652791,
    "buy": true,
-   "near": true
+   "near": true,
+   "zone": false,
+   "new_zone": false
   },
   {
    "ticker": "GBF.DE",
@@ -54,7 +56,9 @@
    "roe": 0.13216189832544867,
    "cagr": 0.07965772235148383,
    "buy": true,
-   "near": true
+   "near": true,
+   "zone": false,
+   "new_zone": false
   },
   {
    "ticker": "R3NK.DE",
@@ -79,7 +83,9 @@
    "roe": 0.207037043913448,
    "cagr": 0.171805688678202,
    "buy": false,
-   "near": true
+   "near": true,
+   "zone": true,
+   "new_zone": true
   },
   {
    "ticker": "FRES.L",
@@ -104,7 +110,9 @@
    "roe": 0.2987307717379245,
    "cagr": 0.23299077772951127,
    "buy": true,
-   "near": true
+   "near": true,
+   "zone": false,
+   "new_zone": false
   },
   {
    "ticker": "AAF.L",
@@ -129,7 +137,9 @@
    "roe": 0.2156925031766201,
    "cagr": 0.06873014740463712,
    "buy": true,
-   "near": true
+   "near": true,
+   "zone": false,
+   "new_zone": false
   },
   {
    "ticker": "RMBS",
@@ -154,7 +164,9 @@
    "roe": 0.16890265129999818,
    "cagr": 0.15873170539973236,
    "buy": false,
-   "near": false
+   "near": false,
+   "zone": false,
+   "new_zone": false
   },
   {
    "ticker": "NYT",
@@ -179,7 +191,9 @@
    "roe": 0.16850555241767387,
    "cagr": 0.06962089644797076,
    "buy": false,
-   "near": false
+   "near": false,
+   "zone": false,
+   "new_zone": false
   },
   {
    "ticker": "MONC.MI",
@@ -204,7 +218,9 @@
    "roe": 0.16278436675746177,
    "cagr": 0.06362478887038914,
    "buy": false,
-   "near": false
+   "near": false,
+   "zone": false,
+   "new_zone": false
   },
   {
    "ticker": "PRX.AS",
@@ -229,7 +245,9 @@
    "roe": 0.21639612502556665,
    "cagr": 0.25178273735254786,
    "buy": true,
-   "near": true
+   "near": true,
+   "zone": false,
+   "new_zone": false
   },
   {
    "ticker": "ADBE",
@@ -254,7 +272,9 @@
    "roe": 0.6134388712036479,
    "cagr": 0.10519817725382885,
    "buy": true,
-   "near": true
+   "near": true,
+   "zone": false,
+   "new_zone": false
   },
   {
    "ticker": "CORT",
@@ -279,7 +299,9 @@
    "roe": 0.15383024212533092,
    "cagr": 0.23735308679536815,
    "buy": false,
-   "near": false
+   "near": false,
+   "zone": false,
+   "new_zone": false
   },
   {
    "ticker": "HOC.L",
@@ -304,7 +326,12 @@
    "roe": 0.27980032872034655,
    "cagr": 0.17125803965830677,
    "buy": true,
-   "near": true
+   "near": true,
+   "zone": false,
+   "new_zone": false
   }
+ ],
+ "zone": [
+  "R3NK.DE"
  ]
 }
