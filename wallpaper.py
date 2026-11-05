@@ -14,8 +14,10 @@ from __future__ import annotations
 import argparse
 import ctypes
 import hashlib
+import html
 import json
 import os
+import re
 import sys
 import time
 from datetime import date, datetime
@@ -855,7 +857,39 @@ def read_alerts() -> list[dict]:
         data = json.loads(ALERTS.read_text(encoding="utf-8"))
     except Exception:                                  # noqa: BLE001
         return []
-    return data.get("alerts", [])[:4]
+    # max two rows per name, else one busy ticker fills the whole card
+    out, seen = [], {}
+    for a in data.get("alerts", []):
+        ticker = str(a.get("ticker", ""))
+        a["text"] = html.unescape(str(a.get("text", "")))
+        if seen.get(ticker, 0) >= 2:
+            continue
+        seen[ticker] = seen.get(ticker, 0) + 1
+        out.append(a)
+        if len(out) >= 6:
+            break
+    return out
+
+
+GOOD_NEWS = re.compile(
+    r"beat|beats|surge|soar|jump|rais(e|es|ed)|record|wins?|winning|award|"
+    r"upgrade|outperform|strong|grow(s|th)?|improv|tops|boost|reiterat|"
+    r"buy rating|hike|expands?|orders?|backlog|contract|deal|partnership|"
+    r"above|higher|accelerat|profit jump|dividend|declares|buyback|buy", re.I)
+BAD_NEWS = re.compile(
+    r"miss(es|ed)?|cut|cuts|lower(s|ed)?|slash|warn|fall(s|ing)?|fell|"
+    r"drop(s|ped)?|sink|plunge|slump|downgrade|underperform|weak|declin|"
+    r"probe|lawsuit|investigat|recall|fraud|halt|delay|loss|layoff|impair|"
+    r"charge|risk|concern|slides?|tumbles?|sinks?", re.I)
+
+
+def tone(text: str) -> str:
+    """'bad' beats 'good' when a headline carries both - the market does too."""
+    if BAD_NEWS.search(text):
+        return "bad"
+    if GOOD_NEWS.search(text):
+        return "good"
+    return "neutral"
 
 
 def render_alerts(img: Image.Image, d: ImageDraw.ImageDraw, rows: list[dict],
@@ -863,7 +897,8 @@ def render_alerts(img: Image.Image, d: ImageDraw.ImageDraw, rows: list[dict],
     """Recent published catalysts on names we own or watch."""
     if not rows:
         return top_y
-    pad_h = 56 + 18 * len(rows)
+    row_h = 21
+    pad_h = 56 + row_h * len(rows)
     x0, y0 = left_x, top_y
     x1 = x0 + pad_w
     y1 = y0 + pad_h
@@ -873,8 +908,8 @@ def render_alerts(img: Image.Image, d: ImageDraw.ImageDraw, rows: list[dict],
                         outline=(255, 255, 255, 28), width=1)
 
     f_label = ImageFont.truetype(FONT_SEMI, 9)
-    f_row = ImageFont.truetype(FONT_SEMI, 10)
-    f_val = ImageFont.truetype(FONT_BOLD, 9)
+    f_row = ImageFont.truetype(FONT_SEMI, 11)
+    f_val = ImageFont.truetype(FONT_BOLD, 10)
     f_small = ImageFont.truetype(FONT_REG, 9)
 
     px, py = x0 + 20, y0 + 15
@@ -885,18 +920,22 @@ def render_alerts(img: Image.Image, d: ImageDraw.ImageDraw, rows: list[dict],
     d.text((x1 - 20 - d.textlength(tag, font=f_small), py), tag,
            font=f_small, fill=(150, 162, 184))
 
-    py += 18
+    py += 19
     for a in rows:
         kind = str(a.get("kind", ""))
         colour = (GREEN if kind == "EARNINGS" else (245, 158, 11)
                   if kind == "CONTRACT" else (155, 140, 255))
         d.text((px, py), str(a.get("ticker", "")).split(".")[0][:6], font=f_val,
                fill=(210, 219, 234))
-        d.text((px + 54, py), kind[:8], font=f_val, fill=colour)
+        d.text((px + 58, py), kind[:8], font=f_val, fill=colour)
         text = str(a.get("text", ""))
-        d.text((px + 118, py - 1), fit_text(d, text, f_row, pad_w - 140),
-               font=f_row, fill=(170, 180, 198))
-        py += 18
+        # a coloured dot before the sentence: green good, red bad, grey neutral
+        tone_colour = {"good": (46, 204, 113), "bad": (239, 107, 107)
+                       }.get(tone(text), (120, 132, 152))
+        d.ellipse([px + 130, py + 5, px + 135, py + 10], fill=tone_colour)
+        d.text((px + 143, py - 1), fit_text(d, text, f_row, pad_w - 165),
+               font=f_row, fill=(180, 190, 206))
+        py += row_h
 
     return y1
 
@@ -1043,8 +1082,8 @@ def render(data: dict, bg_path: Path | None = None, corner: str = "tr",
         etf_bottom = render_etfs(img, d, etfs, check_x1 - 430,
                                  crypto_bottom + 16)
         if alerts:
-            alerts_bottom = render_alerts(img, d, alerts, check_x1 - 430,
-                                          etf_bottom + 16)
+            alerts_bottom = render_alerts(img, d, alerts, check_x1 - 600,
+                                          etf_bottom + 16, pad_w=600)
             render_fib(img, d, check_x1 - 430, alerts_bottom + 16)
 
     return Image.alpha_composite(img, overlay).convert("RGB")

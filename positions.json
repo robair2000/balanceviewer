@@ -16,5 +16,14 @@
   "cost": 962.97,
   "ccy": "USD",
   "note": "stop $170 · Q4 report 27 Jan"
+ },
+ {
+  "ticker": "R3NK.DE",
+  "name": "RENK Group",
+  "shares": 9,
+  "entry": 34.335,
+  "cost": 313.10,
+  "ccy": "EUR",
+  "note": "stop €32.20 · FY report Mar"
  }
 ]

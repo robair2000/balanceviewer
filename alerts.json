@@ -1,6 +1,13 @@
 {
- "generated": "2026-11-05T10:33+00:00",
+ "generated": "2026-11-05T23:02+00:00",
  "alerts": [
+  {
+   "ticker": "BSL.DE",
+   "date": "2026-11-05",
+   "kind": "UPGRADE",
+   "source": "EQS",
+   "text": "MPCM stuft BASLER AG auf &#39;Buy&#39;"
+  },
   {
    "ticker": "BSL.DE",
    "date": "2026-11-05",
@@ -30,88 +37,53 @@
    "text": "Basler AG : Gets a Buy rating from Berenberg - www.marketscreener.com"
   },
   {
-   "ticker": "R3NK.DE",
-   "date": "2026-11-05",
-   "kind": "CONTRACT",
-   "source": "EQS",
-   "text": "Q3 \u00fcbertrifft bei Auftragseingang und Marge; Q4 muss liefern; KAUFEN"
-  },
-  {
-   "ticker": "R3NK.DE",
+   "ticker": "BSL.DE",
    "date": "2026-11-05",
    "kind": "UPGRADE",
-   "source": "EQS",
-   "text": "JEFFERIES stuft Renk auf &#39;Buy&#39;"
-  },
-  {
-   "ticker": "R3NK.DE",
-   "date": "2026-11-05",
-   "kind": "CONTRACT",
-   "source": "EQS",
-   "text": "9M 2026: RENK steigert Auftragseingang um mehr als 30 % bei erneut \u00fcberproportionalem Anstieg des bereinigten EBIT - ope"
-  },
-  {
-   "ticker": "R3NK.DE",
-   "date": "2026-11-05",
-   "kind": "CONTRACT",
-   "source": "EQS",
-   "text": "9M 2026: RENK&#39;s order intake climbs by more than 30% with further above-average increase in adjusted EBIT; operating"
-  },
-  {
-   "ticker": "R3NK.DE",
-   "date": "2026-11-05",
-   "kind": "CONTRACT",
    "source": "news",
-   "text": "Renk order intake jumps by a third, backlog reaches record high - Reuters"
+   "text": "Basler AG : Warburg Research remains its Buy rating - www.marketscreener.com"
   },
   {
-   "ticker": "R3NK.DE",
+   "ticker": "ALB",
    "date": "2026-11-05",
    "kind": "EARNINGS",
    "source": "news",
-   "text": "Renk Group reports Q3 results in line with forecasts - Investing.com"
+   "text": "ALB Q3 Earnings Beat Estimates on Higher Lithium Pricing - Yahoo Finance"
   },
   {
-   "ticker": "R3NK.DE",
+   "ticker": "ALB",
    "date": "2026-11-05",
-   "kind": "CONTRACT",
+   "kind": "EARNINGS",
    "source": "news",
-   "text": "Renk order intake jumps by a third, backlog reaches record high - Euronext Markets: Real-time Stock Market Data | live"
+   "text": "ALB Q3 FY2026 earnings call - BigGo Finance"
   },
   {
-   "ticker": "R3NK.DE",
+   "ticker": "CDE",
    "date": "2026-11-05",
-   "kind": "CONTRACT",
+   "kind": "EARNINGS",
    "source": "news",
-   "text": "Renk order intake jumps by a third as defence demand remains strong - www.marketscreener.com"
+   "text": "Coeur Mining, Inc. 2026 Q3 - Results - Earnings Call Presentation (NYSE:CDE) 2026-11-05 - Seeking Alpha"
   },
   {
-   "ticker": "R3NK.DE",
+   "ticker": "CDE",
    "date": "2026-11-05",
-   "kind": "CONTRACT",
+   "kind": "EARNINGS",
    "source": "news",
-   "text": "Renk Order Intake Up 33% on Strong Defence Demand, Profit Rises - Global Banking & Finance Review"
+   "text": "Coeur Mining (CDE) Declares Semi-Annual Dividend Amid Mixed Earnings Results - GuruFocus"
   },
   {
-   "ticker": "NYT",
+   "ticker": "CDE",
    "date": "2026-11-05",
-   "kind": "CONTRACT",
+   "kind": "EARNINGS",
    "source": "news",
-   "text": "New Jersey Powerball Player Wins $847 Million Jackpot\u2014But They'll Take Home A Much Smaller Amount - Forbes"
+   "text": "Why Coeur Mining Stock Is Moving After Stronger Sales And Softer Earnings - Simply Wall St"
   },
   {
-   "ticker": "NYT",
+   "ticker": "CDE",
    "date": "2026-11-05",
-   "kind": "CONTRACT",
+   "kind": "EARNINGS",
    "source": "news",
-   "text": "New Jersey ticket wins $847M Powerball jackpot, ninth-largest in game history - ABC7 New York"
-  },
-  {
-   "ticker": "NYT",
-   "date": "2026-11-05",
-   "kind": "CONTRACT",
-   "source": "news",
-   "text": "Harry Kane signs new Bayern Munich contract: 'I want to win many more titles' - ESPN"
+   "text": "Coeur Mining (CDE) Reports Q3 Results, Shares Drop Amid Mixed Fi - GuruFocus"
   },
   {
    "ticker": "TEM",
@@ -121,81 +93,60 @@
    "text": "Tempus AI Stock: An Inflection Point Has Arrived (Earnings Analysis) (NASDAQ:TEM) - Seeking Alpha"
   },
   {
-   "ticker": "NYT",
+   "ticker": "ALB",
    "date": "2026-11-04",
    "kind": "EARNINGS",
    "source": "SEC 8-K",
    "text": "8-K 2.02,9.01"
   },
   {
-   "ticker": "NYT",
-   "date": "2026-11-04",
-   "kind": "CONTRACT",
-   "source": "news",
-   "text": "Markets cheer Democratic win, betting divided Washington means fewer policy shocks - Reuters"
-  },
-  {
-   "ticker": "NYT",
-   "date": "2026-11-04",
-   "kind": "CONTRACT",
-   "source": "news",
-   "text": "Day after historic win, New Mexico Gov.-elect Haaland starts accepting resumes - Source New Mexico"
-  },
-  {
-   "ticker": "ADBE",
-   "date": "2026-11-04",
-   "kind": "CONTRACT",
-   "source": "news",
-   "text": "Adobe brings customer experience AI agent to ChatGPT, Claude and Gemini (ADBE:NASDAQ) - Seeking Alpha"
-  },
-  {
-   "ticker": "ADBE",
-   "date": "2026-11-04",
-   "kind": "UPGRADE",
-   "source": "news",
-   "text": "Adobe downgraded to Sell due to risk of 'hard reset': Citi - Seeking Alpha"
-  },
-  {
-   "ticker": "CORT",
+   "ticker": "ALB",
    "date": "2026-11-04",
    "kind": "EARNINGS",
    "source": "news",
-   "text": "Corcept Therapeutics Inc (CORT) (Q3 2026) Earnings Call Highligh - GuruFocus"
+   "text": "Albemarle (ALB) Tops Q3 Earnings and Revenue Estimates - Yahoo Finance"
   },
   {
-   "ticker": "TEM",
-   "date": "2026-11-03",
-   "kind": "UPGRADE",
+   "ticker": "ALB",
+   "date": "2026-11-04",
+   "kind": "EARNINGS",
    "source": "news",
-   "text": "Jefferies upgrades Tempus AI stock rating to hold, raises price target to $70 - Investing.com"
+   "text": "Albemarle (ALB) Q3 Earnings: How Key Metrics Compare to Wall Street Estimates - Yahoo Finance"
   },
   {
-   "ticker": "CORT",
-   "date": "2026-11-03",
+   "ticker": "CDE",
+   "date": "2026-11-04",
    "kind": "EARNINGS",
    "source": "SEC 8-K",
-   "text": "8-K 2.02,7.01,9.01"
+   "text": "8-K 2.02,9.01"
   },
   {
-   "ticker": "CORT",
+   "ticker": "CDE",
+   "date": "2026-11-04",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Coeur Mining (CDE) Q3 Earnings Meet Estimates - Yahoo Finance"
+  },
+  {
+   "ticker": "CDE",
+   "date": "2026-11-04",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Earnings Flash (CDE) Coeur Mining, Inc. Posts Q3 Adjusted EPS $0.10 per Share, vs. FactSet Est of $0.14 - marketscreener"
+  },
+  {
+   "ticker": "ALB",
    "date": "2026-11-03",
    "kind": "EARNINGS",
    "source": "news",
-   "text": "Corcept: Q3 Earnings Snapshot - Yahoo Finance"
+   "text": "Albemarle (ALB) Prepares to Report Q3 Earnings Amid Mixed Market Signals - GuruFocus"
   },
   {
-   "ticker": "CORT",
+   "ticker": "PCG",
    "date": "2026-11-03",
    "kind": "EARNINGS",
    "source": "news",
-   "text": "Corcept Therapeutics falls on guidance despite earnings beat - Investing.com"
-  },
-  {
-   "ticker": "CORT",
-   "date": "2026-11-03",
-   "kind": "EARNINGS",
-   "source": "news",
-   "text": "Corcept Therapeutics (CORT) Q3 Earnings and Revenues Surpass Estimates - Yahoo Finance UK"
+   "text": "Does Earnings Miss Change The Bull Case For PG&E Stock (PCG)? - Simply Wall St"
   },
   {
    "ticker": "TEM",
@@ -254,25 +205,11 @@
    "text": "Tempus AI (TEM) Beats Q3 Earnings and Revenue Estimates - Yahoo Finance"
   },
   {
-   "ticker": "BSL.DE",
-   "date": "2026-10-29",
-   "kind": "EARNINGS",
-   "source": "news",
-   "text": "Basler AG preliminary 9-month result: Again increase of forecast 2026 after continued high incoming orders and strong re"
-  },
-  {
-   "ticker": "BSL.DE",
-   "date": "2026-10-29",
-   "kind": "UPGRADE",
-   "source": "news",
-   "text": "Basler AG : Jefferies reaffirms its Buy rating - www.marketscreener.com"
-  },
-  {
-   "ticker": "TER",
-   "date": "2026-10-29",
-   "kind": "EARNINGS",
-   "source": "news",
-   "text": "Teradyne Q3 Earnings Call Highlights AI Demand and 2027 Growth Plans - Yahoo Finance"
+   "ticker": "ALB",
+   "date": "2026-10-30",
+   "kind": "CONTRACT",
+   "source": "SEC 8-K",
+   "text": "8-K 1.01,1.02,2.03,5.03,9.01"
   },
   {
    "ticker": "TER",

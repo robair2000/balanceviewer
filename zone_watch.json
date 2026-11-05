@@ -3,114 +3,125 @@
  "count": 11,
  "zone": [
   {
-   "ticker": "IPGP",
-   "price": 70.11,
-   "dd": -54.4,
-   "from_low": 1.0,
-   "r30": 0.0,
-   "from_30d_low": 0.0,
-   "rsi": 39.4,
-   "new": false
+   "ticker": "SEIT.L",
+   "price": 31.9,
+   "dd": -49.3,
+   "from_low": 2.7,
+   "r30": -12.5,
+   "from_30d_low": 2.7,
+   "rsi": 40.7,
+   "above_ma50": -6.5,
+   "new": true
   },
   {
    "ticker": "R3NK.DE",
-   "price": 34.5,
-   "dd": -48.2,
-   "from_low": 1.8,
-   "r30": 0.0,
-   "from_30d_low": 0.0,
-   "rsi": 35.8,
-   "new": false
+   "price": 35.205,
+   "dd": -47.1,
+   "from_low": 3.9,
+   "r30": -12.5,
+   "from_30d_low": 3.9,
+   "rsi": 38.3,
+   "above_ma50": -10.1,
+   "new": true
   },
   {
-   "ticker": "SEIT.L",
-   "price": 32.1,
-   "dd": -49.0,
-   "from_low": 3.4,
-   "r30": 0.0,
-   "from_30d_low": 0.0,
-   "rsi": 42.7,
-   "new": false
-  },
-  {
-   "ticker": "APTV",
-   "price": 43.26,
-   "dd": -51.2,
-   "from_low": 4.6,
-   "r30": 0.0,
-   "from_30d_low": 0.0,
-   "rsi": 46.3,
-   "new": false
-  },
-  {
-   "ticker": "ALB",
-   "price": 94.97,
-   "dd": -55.7,
-   "from_low": 5.3,
-   "r30": 0.0,
-   "from_30d_low": 0.0,
-   "rsi": 42.6,
-   "new": false
-  },
-  {
-   "ticker": "BDC",
-   "price": 105.15,
-   "dd": -30.2,
-   "from_low": 5.7,
-   "r30": 0.0,
-   "from_30d_low": 0.0,
-   "rsi": 45.1,
-   "new": false
+   "ticker": "MRO.L",
+   "price": 465.5,
+   "dd": -31.7,
+   "from_low": 6.2,
+   "r30": -1.5,
+   "from_30d_low": 6.2,
+   "rsi": 46.7,
+   "above_ma50": -2.3,
+   "new": true
   },
   {
    "ticker": "VNA.DE",
-   "price": 17.09,
-   "dd": -36.9,
-   "from_low": 7.0,
-   "r30": 0.0,
-   "from_30d_low": 0.0,
-   "rsi": 56.0,
-   "new": false
+   "price": 17.0,
+   "dd": -37.2,
+   "from_low": 6.4,
+   "r30": -0.5,
+   "from_30d_low": 6.4,
+   "rsi": 54.4,
+   "above_ma50": -1.8,
+   "new": true
   },
   {
    "ticker": "ZEAL.CO",
-   "price": 241.2,
-   "dd": -55.8,
-   "from_low": 8.7,
-   "r30": 0.0,
-   "from_30d_low": 0.0,
-   "rsi": 49.9,
-   "new": false
-  },
-  {
-   "ticker": "CSG.AS",
-   "price": 13.69,
-   "dd": -58.5,
-   "from_low": 10.8,
-   "r30": 0.0,
-   "from_30d_low": 0.0,
-   "rsi": 40.2,
-   "new": false
-  },
-  {
-   "ticker": "CDE",
-   "price": 14.58,
-   "dd": -46.2,
-   "from_low": 11.3,
-   "r30": 0.0,
-   "from_30d_low": 0.0,
-   "rsi": 43.6,
-   "new": false
+   "price": 236.5,
+   "dd": -56.7,
+   "from_low": 6.6,
+   "r30": -14.3,
+   "from_30d_low": 6.6,
+   "rsi": 45.1,
+   "above_ma50": -9.1,
+   "new": true
   },
   {
    "ticker": "AA",
-   "price": 40.58,
-   "dd": -51.3,
-   "from_low": 14.4,
-   "r30": 0.0,
+   "price": 38.42,
+   "dd": -53.9,
+   "from_low": 8.2,
+   "r30": -9.7,
+   "from_30d_low": 1.6,
+   "rsi": 38.1,
+   "above_ma50": -12.1,
+   "new": true
+  },
+  {
+   "ticker": "ALB",
+   "price": 98.37,
+   "dd": -54.1,
+   "from_low": 9.1,
+   "r30": -9.1,
+   "from_30d_low": 9.1,
+   "rsi": 49.1,
+   "above_ma50": -9.1,
+   "new": true
+  },
+  {
+   "ticker": "CSG.AS",
+   "price": 13.554,
+   "dd": -58.9,
+   "from_low": 9.7,
+   "r30": -9.8,
    "from_30d_low": 0.0,
-   "rsi": 46.8,
-   "new": false
+   "rsi": 39.0,
+   "above_ma50": -10.5,
+   "new": true
+  },
+  {
+   "ticker": "PCG",
+   "price": 13.23,
+   "dd": -30.1,
+   "from_low": 11.2,
+   "r30": 7.8,
+   "from_30d_low": 11.2,
+   "rsi": 51.0,
+   "above_ma50": -0.1,
+   "new": true
+  },
+  {
+   "ticker": "CDE",
+   "price": 14.63,
+   "dd": -46.1,
+   "from_low": 11.7,
+   "r30": -22.8,
+   "from_30d_low": 11.7,
+   "rsi": 44.0,
+   "above_ma50": -16.6,
+   "new": true
+  },
+  {
+   "ticker": "DATA.L",
+   "price": 64.5,
+   "dd": -47.5,
+   "from_low": 15.0,
+   "r30": 12.0,
+   "from_30d_low": 12.0,
+   "rsi": 50.6,
+   "above_ma50": -0.2,
+   "new": true
   }
  ]
 }
