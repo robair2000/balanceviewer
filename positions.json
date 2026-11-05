@@ -6,14 +6,14 @@
   "entry": 23.45,
   "cost": 991.35,
   "ccy": "EUR",
-  "note": "9M report 4 Nov"
+  "note": "9M done · FY report 31 Mar"
  },
  {
   "ticker": "TER",
   "name": "Teradyne",
-  "shares": 3,
-  "entry": 275.0,
-  "cost": 740.0,
+  "shares": 4,
+  "entry": 268.23,
+  "cost": 962.97,
   "ccy": "USD",
   "note": "stop $170 · Q4 report 27 Jan"
  }

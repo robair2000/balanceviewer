@@ -1,40 +1,159 @@
 {
- "generated": "2026-11-04T09:03+00:00",
+ "generated": "2026-11-05T08:32+00:00",
  "alerts": [
   {
-   "ticker": "BSL.DE",
-   "date": "2026-11-04",
-   "kind": "EARNINGS",
+   "ticker": "R3NK.DE",
+   "date": "2026-11-05",
+   "kind": "UPGRADE",
    "source": "EQS",
-   "text": "9-Monatsergebnis 2026: Basler steigert Umsatz und Ergebnis deutlich, Prognose f\u00fcr 2026 angehoben (EQS Group (DE))"
+   "text": "JEFFERIES stuft Renk auf &#39;Buy&#39;"
   },
   {
-   "ticker": "TER",
-   "date": "2026-11-04",
+   "ticker": "R3NK.DE",
+   "date": "2026-11-05",
+   "kind": "CONTRACT",
+   "source": "EQS",
+   "text": "Press Release: 9M 2026: RENK&#39;s order intake climbs by more than 30% with further above-average increase in adjusted "
+  },
+  {
+   "ticker": "R3NK.DE",
+   "date": "2026-11-05",
+   "kind": "CONTRACT",
+   "source": "EQS",
+   "text": "Press Release: 9M 2026: RENK&#39;s order intake -2-"
+  },
+  {
+   "ticker": "R3NK.DE",
+   "date": "2026-11-05",
+   "kind": "CONTRACT",
+   "source": "EQS",
+   "text": "9M 2026: RENK&#39;s order intake climbs by more than 30% with further above-average increase in adjusted EBIT; operating"
+  },
+  {
+   "ticker": "R3NK.DE",
+   "date": "2026-11-05",
+   "kind": "CONTRACT",
+   "source": "EQS",
+   "text": "9M 2026: RENK steigert Auftragseingang um mehr als 30 % bei erneut \u00fcberproportionalem Anstieg des bereinigten EBIT - ope"
+  },
+  {
+   "ticker": "R3NK.DE",
+   "date": "2026-11-05",
+   "kind": "CONTRACT",
+   "source": "news",
+   "text": "Renk order intake jumps by a third, backlog reaches record high - Reuters"
+  },
+  {
+   "ticker": "R3NK.DE",
+   "date": "2026-11-05",
    "kind": "EARNINGS",
    "source": "news",
-   "text": "Should Earnings Beat Require Action From Teradyne (TER) Investors? - Simply Wall St"
+   "text": "Renk Group reports Q3 results in line with forecasts - Investing.com"
+  },
+  {
+   "ticker": "R3NK.DE",
+   "date": "2026-11-05",
+   "kind": "CONTRACT",
+   "source": "news",
+   "text": "Renk order intake jumps by a third, backlog reaches record high - Euronext Markets: Real-time Stock Market Data | live"
+  },
+  {
+   "ticker": "R3NK.DE",
+   "date": "2026-11-05",
+   "kind": "CONTRACT",
+   "source": "news",
+   "text": "Renk order intake jumps by a third as defence demand remains strong - www.marketscreener.com"
+  },
+  {
+   "ticker": "R3NK.DE",
+   "date": "2026-11-05",
+   "kind": "CONTRACT",
+   "source": "news",
+   "text": "Renk Order Intake Up 33% on Strong Defence Demand, Profit Rises - Global Banking & Finance Review"
+  },
+  {
+   "ticker": "NYT",
+   "date": "2026-11-05",
+   "kind": "CONTRACT",
+   "source": "news",
+   "text": "Harry Kane signs new Bayern Munich contract - ESPN"
+  },
+  {
+   "ticker": "NYT",
+   "date": "2026-11-05",
+   "kind": "CONTRACT",
+   "source": "news",
+   "text": "Voters reject Trump\u2019s GOP as Democrats rack up wins - NBC News"
   },
   {
    "ticker": "TEM",
-   "date": "2026-11-03",
+   "date": "2026-11-04",
    "kind": "EARNINGS",
    "source": "news",
-   "text": "Tempus AI Analysts Boost Their Forecasts Following Strong Q3 Results - Benzinga"
+   "text": "Tempus AI Stock: An Inflection Point Has Arrived (Earnings Analysis) (NASDAQ:TEM) - Seeking Alpha"
   },
   {
-   "ticker": "APP",
-   "date": "2026-11-03",
+   "ticker": "NYT",
+   "date": "2026-11-04",
    "kind": "EARNINGS",
-   "source": "news",
-   "text": "Bear Call Spread Ideas for Applovin Earnings - Barchart.com"
+   "source": "SEC 8-K",
+   "text": "8-K 2.02,9.01"
   },
   {
-   "ticker": "APP",
+   "ticker": "NYT",
+   "date": "2026-11-04",
+   "kind": "CONTRACT",
+   "source": "news",
+   "text": "Day after historic win, New Mexico Gov.-elect Haaland starts accepting resumes - Source New Mexico"
+  },
+  {
+   "ticker": "ADBE",
+   "date": "2026-11-04",
+   "kind": "CONTRACT",
+   "source": "news",
+   "text": "Adobe brings customer experience AI agent to ChatGPT, Claude and Gemini (ADBE:NASDAQ) - Seeking Alpha"
+  },
+  {
+   "ticker": "ADBE",
+   "date": "2026-11-04",
+   "kind": "UPGRADE",
+   "source": "news",
+   "text": "Adobe downgraded to Sell due to risk of 'hard reset': Citi - Seeking Alpha"
+  },
+  {
+   "ticker": "CORT",
+   "date": "2026-11-04",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Corcept Therapeutics Inc (CORT) (Q3 2026) Earnings Call Highligh - GuruFocus"
+  },
+  {
+   "ticker": "CORT",
+   "date": "2026-11-03",
+   "kind": "EARNINGS",
+   "source": "SEC 8-K",
+   "text": "8-K 2.02,7.01,9.01"
+  },
+  {
+   "ticker": "CORT",
    "date": "2026-11-03",
    "kind": "EARNINGS",
    "source": "news",
-   "text": "Earnings Preview: AppLovin Stock Bounces Off 52-Week Lows - Schaeffer's Investment Research"
+   "text": "Corcept: Q3 Earnings Snapshot - Yahoo Finance"
+  },
+  {
+   "ticker": "CORT",
+   "date": "2026-11-03",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Corcept Therapeutics falls on guidance despite earnings beat - Investing.com"
+  },
+  {
+   "ticker": "CORT",
+   "date": "2026-11-03",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Corcept Therapeutics (CORT) Q3 Earnings and Revenues Surpass Estimates - Yahoo Finance UK"
   },
   {
    "ticker": "TEM",
@@ -48,7 +167,14 @@
    "date": "2026-11-02",
    "kind": "EARNINGS",
    "source": "news",
-   "text": "Do You Own Tempus AI Without Knowing It? Check These ETFs After Its Earnings Surge - Yahoo Finance"
+   "text": "Tempus AI Shares Rise 4.18% as Q3 Earnings Beat Forecasts and Revenue Guidance Increases - Yahoo Finance"
+  },
+  {
+   "ticker": "TEM",
+   "date": "2026-11-02",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Do You Own Tempus AI Without Knowing It? Check These ETFs After Its Earnings Surge - 24/7 Wall St."
   },
   {
    "ticker": "TEM",
@@ -69,13 +195,6 @@
    "date": "2026-11-02",
    "kind": "EARNINGS",
    "source": "news",
-   "text": "Tempus AI Shares Rise 4.18% as Q3 Earnings Beat Forecasts and Revenue Guidance Increases - Yahoo Finance"
-  },
-  {
-   "ticker": "TEM",
-   "date": "2026-11-02",
-   "kind": "EARNINGS",
-   "source": "news",
    "text": "Tempus AI Revenue Up 23%; Gains Cut Net Loss: Rapid Earnings Reaction - The Motley Fool"
   },
   {
@@ -86,60 +205,18 @@
    "text": "Tempus AI faces profitability test as earnings loom Monday - Investing.com"
   },
   {
-   "ticker": "GBF.DE",
+   "ticker": "TEM",
    "date": "2026-11-02",
-   "kind": "UPGRADE",
+   "kind": "EARNINGS",
    "source": "news",
-   "text": "Bilfinger SE (0NRG.L) Analyst insights, Price targets and Recommendations - Yahoo Finance Australia"
+   "text": "Tempus AI (TEM) Beats Q3 Earnings and Revenue Estimates - Yahoo Finance"
   },
   {
-   "ticker": "NFLX",
-   "date": "2026-11-01",
-   "kind": "UPGRADE",
-   "source": "news",
-   "text": "Netflix's U.S. Audience Engagement Problem Is Hurting The Stock (Rating Downgrade) - Seeking Alpha"
-  },
-  {
-   "ticker": "ADBE",
-   "date": "2026-10-30",
-   "kind": "UPGRADE",
-   "source": "news",
-   "text": "Adobe Inc. (ADBE34.SA) Analyst insights, Price targets and Recommendations - Yahoo Finance UK"
-  },
-  {
-   "ticker": "RMD",
+   "ticker": "AAF.L",
    "date": "2026-10-30",
    "kind": "EARNINGS",
    "source": "news",
-   "text": "ResMed Earnings: Volume Drives Solid Start, but Some Earnings Benefits Will Reverse - Morningstar"
-  },
-  {
-   "ticker": "RMD",
-   "date": "2026-10-30",
-   "kind": "EARNINGS",
-   "source": "news",
-   "text": "ResMed Inc. Q1 2027 Earnings Call Summary - Yahoo Finance"
-  },
-  {
-   "ticker": "RMD",
-   "date": "2026-10-30",
-   "kind": "EARNINGS",
-   "source": "news",
-   "text": "ResMed Inc. 2027 Q1 - Results - Earnings Call Presentation (NYSE:RMD) 2026-10-30 - Seeking Alpha"
-  },
-  {
-   "ticker": "RMD",
-   "date": "2026-10-30",
-   "kind": "EARNINGS",
-   "source": "news",
-   "text": "ResMed Inc (RMD) Q1 2027 Earnings Call Highlights: Revenue Climbs 7%, EPS Jumps 14%, and Record ... - Yahoo Finance"
-  },
-  {
-   "ticker": "RMD",
-   "date": "2026-10-30",
-   "kind": "EARNINGS",
-   "source": "news",
-   "text": "What ResMed (RMD) Said on Its Q1 Earnings Call - Yahoo Finance"
+   "text": "What Airtel Africa (AAF) Said on Its Q2 Earnings Call - Yahoo Finance"
   },
   {
    "ticker": "BSL.DE",
@@ -160,21 +237,7 @@
    "date": "2026-10-29",
    "kind": "EARNINGS",
    "source": "news",
-   "text": "Teradyne Q3 Earnings Call Highlights AI Demand and 2027 Growth Plans - Zacks Investment Research"
-  },
-  {
-   "ticker": "RMBS",
-   "date": "2026-10-29",
-   "kind": "EARNINGS",
-   "source": "news",
-   "text": "Rambus Inc. Just Beat EPS By 7.1%: Here's What Analysts Think Will Happen Next - Moomoo"
-  },
-  {
-   "ticker": "RMD",
-   "date": "2026-10-29",
-   "kind": "EARNINGS",
-   "source": "SEC 8-K",
-   "text": "8-K 2.02,8.01,9.01"
+   "text": "Teradyne Q3 Earnings Call Highlights AI Demand and 2027 Growth Plans - Yahoo Finance"
   },
   {
    "ticker": "TER",
@@ -182,27 +245,6 @@
    "kind": "EARNINGS",
    "source": "SEC 8-K",
    "text": "8-K 2.02,9.01"
-  },
-  {
-   "ticker": "TER",
-   "date": "2026-10-28",
-   "kind": "EARNINGS",
-   "source": "news",
-   "text": "Teradyne: Q3 Earnings Snapshot - Yahoo Finance"
-  },
-  {
-   "ticker": "TER",
-   "date": "2026-10-28",
-   "kind": "EARNINGS",
-   "source": "news",
-   "text": "Teradyne Q3 Earnings Beat Estimates, Revenues Increase Year over Year - Yahoo Finance Australia"
-  },
-  {
-   "ticker": "APP",
-   "date": "2026-10-28",
-   "kind": "EARNINGS",
-   "source": "news",
-   "text": "AppLovin (APP) Earnings Expected to Grow: Should You Buy? - Yahoo Finance"
   },
   {
    "ticker": "RMBS",
@@ -210,13 +252,6 @@
    "kind": "EARNINGS",
    "source": "SEC 8-K",
    "text": "8-K 2.02,9.01"
-  },
-  {
-   "ticker": "DECK",
-   "date": "2026-10-22",
-   "kind": "EARNINGS",
-   "source": "SEC 8-K",
-   "text": "8-K 2.02,5.02,7.01,9.01"
   }
  ]
 }
