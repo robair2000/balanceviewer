@@ -654,7 +654,9 @@ def render_watchlist(img: Image.Image, d: ImageDraw.ImageDraw,
                 d.ellipse([px - 2, py + 2, px + 7, py + 11], outline=colour,
                           width=1)
 
-        name = f"{r['ticker'].split('.')[0]} {r['name']}"
+        name = r["ticker"].split(".")[0]
+        if r.get("name") and str(r["name"]).strip() != name:
+            name = f"{name} {r['name']}"
         d.text((px + 10, py), fit_text(d, name, f_row, pad_w - 160),
                font=f_row, fill=(215, 205, 235) if r.get("zone")
                else (200, 209, 224))
