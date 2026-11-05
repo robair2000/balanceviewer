@@ -47,10 +47,14 @@ CRYPTO = Path(os.getenv("SAXO_CRYPTO_FILE", str(ROOT / "crypto_watch.json")))
 ETFS = Path(os.getenv("SAXO_ETF_FILE", str(ROOT / "etf_watch.json")))
 # catalyst scan output
 ALERTS = Path(os.getenv("SAXO_ALERTS_FILE", str(ROOT / "alerts.json")))
+# universe-wide zone scan output (prices only, runs daily)
+ZONE_WATCH = Path(os.getenv("SAXO_ZONE_FILE", str(ROOT / "zone_watch.json")))
 # throttle file: when the crypto screen was last launched
 CRYPTO_STAMP = ROOT / ".crypto_refresh.json"
 # throttle file: when the ETF screen was last launched
 ETF_STAMP = ROOT / ".etf_refresh.json"
+# throttle file: when the universe zone scan was last launched
+ZONE_STAMP = ROOT / ".zone_refresh.json"
 
 SCREEN_W, SCREEN_H = 1920, 1080
 FONT_BOLD = "C:/Windows/Fonts/segoeuib.ttf"
@@ -598,14 +602,16 @@ def watchlist_stats(names: list[dict]) -> list[dict]:
 
 def render_watchlist(img: Image.Image, d: ImageDraw.ImageDraw,
                      rows: list[dict], rules: dict, right_x: int,
-                     top_y: int, pad_w: int = 336) -> int:
+                     top_y: int, pad_w: int = 336,
+                     zone_watch: dict | None = None) -> int:
     """Quality names, their forward P/E, and how far they are from a buy."""
     if not rows:
         return top_y
     dd_min = float(rules.get("drawdown_min", 20.0))
     pe_max = rules.get("pe_max")
+    zone_rows = (zone_watch or {}).get("zone") or []
 
-    pad_h = 56 + 18 * len(rows)
+    pad_h = 56 + 18 * len(rows) + (16 if zone_rows else 0)
     x1, y0 = right_x, top_y
     x0 = x1 - pad_w
     y1 = y0 + pad_h
@@ -660,6 +666,17 @@ def render_watchlist(img: Image.Image, d: ImageDraw.ImageDraw,
         d.text((x1 - 20 - d.textlength(dots, font=f_val), py), dots,
                font=f_val, fill=colour)
         py += 18
+
+    if zone_rows:
+        py += 2
+        new = [r["ticker"].split(".")[0] for r in zone_rows if r.get("new")]
+        if new:
+            text = ("NEW IN ZONE: " + " ".join(new[:3])
+                    + (f" +{len(new) - 3}" if len(new) > 3 else ""))
+        else:
+            text = f"{len(zone_rows)} in the basing zone (universe)"
+        d.text((px, py), fit_text(d, text, f_small, pad_w - 40), font=f_small,
+               fill=(196, 130, 255))
 
     return y1
 
@@ -944,7 +961,8 @@ def render(data: dict, bg_path: Path | None = None, corner: str = "tr",
            watch_rules: dict | None = None,
            crypto: list[dict] | None = None,
            etfs: list[dict] | None = None,
-           alerts: list[dict] | None = None) -> Image.Image:
+           alerts: list[dict] | None = None,
+           zone_watch: dict | None = None) -> Image.Image:
     rows = build_rows(data, hidden)
     pad_w = 336
     pad_h = 88 + 20 * len(rows)
@@ -1007,7 +1025,8 @@ def render(data: dict, bg_path: Path | None = None, corner: str = "tr",
     watch_bottom = thesis_bottom
     if watch:
         watch_bottom = render_watchlist(img, d, watch, watch_rules or {}, x1,
-                                        thesis_bottom + 16)
+                                        thesis_bottom + 16,
+                                        zone_watch=zone_watch)
     if plan:
         render_plan(img, d, plan, x1 - 336, watch_bottom + 16, pad_w=336)
 
@@ -1102,12 +1121,63 @@ def refresh_etfs() -> None:
                    max_age=24 * 3600, retry_after=6 * 3600)
 
 
+def refresh_watchlist_light(max_age: int = 24 * 3600,
+                            retry_after: int = 6 * 3600) -> None:
+    """Re-check the names already on the list, once a day.
+
+    The full 1,644-name scan stays a manual monthly job; this only refreshes the
+    dozen names on the panel so a name entering the basing zone shows up the
+    same day instead of waiting for the next full rescan.
+    """
+    try:
+        now = time.time()
+        if WATCHLIST.exists() and now - WATCHLIST.stat().st_mtime < max_age:
+            return
+        try:
+            last = float(json.loads(
+                WATCHLIST_STAMP.read_text(encoding="utf-8"))["at"])
+        except Exception:                              # noqa: BLE001
+            last = 0.0
+        if now - last < retry_after:
+            return
+        script = ROOT / "refresh_watchlist.py"
+        if not script.exists():
+            return
+        import subprocess
+        subprocess.Popen([sys.executable, str(script), "--names-only"],
+                         cwd=str(ROOT), stdout=subprocess.DEVNULL,
+                         stderr=subprocess.DEVNULL,
+                         creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+        WATCHLIST_STAMP.write_text(json.dumps({"at": now}), encoding="utf-8")
+    except Exception:                                  # noqa: BLE001
+        pass
+
+
+def refresh_zone_scan(max_age: int = 20 * 3600, retry_after: int = 4 * 3600) -> None:
+    """Scan the whole universe for names in the basing zone, once a day.
+
+    Prices only, one batched download: ~35 seconds for 1,644 names, so this can
+    run daily without touching the per-name endpoints that get rate-limited.
+    """
+    refresh_screen(ZONE_WATCH, ROOT / "zone_scan.py", ZONE_STAMP,
+                   max_age=max_age, retry_after=retry_after)
+
+
+def read_zone_watch() -> dict:
+    try:
+        return json.loads(ZONE_WATCH.read_text(encoding="utf-8"))
+    except Exception:                                  # noqa: BLE001
+        return {}
+
+
 def update(apply: bool, force: bool, bg_path: Path | None = None, corner: str = "tr",
            threshold: float = 0.25, max_age: int = 3600,
            hidden: bool | None = None, toggle: bool = False) -> str:
     refresh_alerts()
     refresh_crypto()
     refresh_etfs()
+    refresh_watchlist_light()
+    refresh_zone_scan()
     state = read_state()
     if toggle:
         hidden = not bool(state.get("hidden"))
@@ -1127,6 +1197,7 @@ def update(apply: bool, force: bool, bg_path: Path | None = None, corner: str = 
     crypto = read_crypto()
     etfs = read_etfs()
     alerts = read_alerts()
+    zone_watch = read_zone_watch()
     total = float(data.get("total_usd") or 0)
     summary = f"{money(total)} | " + " ".join(
         f"{s.get('label')}={money(s.get('total_usd'))}" for s in data.get("sources", []))
@@ -1139,7 +1210,7 @@ def update(apply: bool, force: bool, bg_path: Path | None = None, corner: str = 
             return summary + f"  [skipped: {', '.join(failed)} unavailable, kept previous]"
 
     img = render(data, bg_path, corner, hidden, plan, positions, prices, metrics,
-                 fx, watch, watch_rules, crypto, etfs, alerts)
+                 fx, watch, watch_rules, crypto, etfs, alerts, zone_watch)
     img.save(OUT, "PNG")
 
     bg_sig = f"{bg_path}:{bg_path.stat().st_mtime_ns}" if bg_path and bg_path.exists() else "none"

@@ -215,12 +215,51 @@ def main() -> int:
 
     ap = argparse.ArgumentParser()
     ap.add_argument("--limit", type=int, help="only scan the first N names")
+    ap.add_argument("--names-only", action="store_true",
+                    help="re-check the names already on the list (~1 minute)")
     ap.add_argument("--no-write", action="store_true",
                     help="test run: print results, write nothing")
     args = ap.parse_args()
 
     rf = risk_free()
     pe_max = 100.0 / (rf + PREMIUM)
+
+    # ---- light pass: refresh the dozen names already on the list and work out
+    # which ones have just entered the basing zone. This is what the wallpaper
+    # loop runs daily; the full 1,644-name scan stays a manual monthly job.
+    if args.names_only:
+        data = json.loads(OUT.read_text(encoding="utf-8"))
+        prev_zone = set(data.get("zone") or [])
+        names = []
+        for n in data.get("names", []):
+            sym = n["ticker"]
+            try:
+                r = check(sym)
+            except Exception:                              # noqa: BLE001
+                r = None
+            if r:
+                r["buy"] = (r["pe"] <= pe_max and r["dd"] <= -DRAWDOWN_MIN
+                            and r["pe"] >= 4)
+                r["near"] = (r["pe"] <= pe_max * 1.10
+                             and r["dd"] <= -(DRAWDOWN_MIN - 5))
+                r["new_zone"] = bool(r.get("zone") and sym not in prev_zone)
+            else:
+                # filtered out (RSI >= 70 or already 12% off the low): no longer
+                # basing, but keep it on the list with its last known numbers
+                n["zone"] = False
+                n["new_zone"] = False
+                r = n
+            names.append(r)
+            time.sleep(0.15)
+        data["names"] = names
+        data["zone"] = [r["ticker"] for r in names if r.get("zone")]
+        data.setdefault("rules", {})["asof"] = str(date.today())
+        OUT.write_text(json.dumps(data, indent=1), encoding="utf-8")
+        new = [r["ticker"] for r in names if r.get("new_zone")]
+        print(f"light pass: {len(names)} names, {len(data['zone'])} in zone"
+              + (f", NEW: {', '.join(new)}" if new else ""))
+        return 0
+
     tickers = [l.strip() for l in UNIVERSE.read_text(encoding="utf-8").splitlines()
                if l.strip() and not l.startswith("#")]
     if args.limit:

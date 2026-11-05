@@ -10,3 +10,5 @@ assets/background.*
 *.log
 .crypto_refresh.json
 .etf_refresh.json
+.watchlist_refresh.json
+.zone_refresh.json
