@@ -557,6 +557,7 @@ def read_watchlist() -> tuple[dict, list[dict]]:
     rules = data.get("rules") or {}
     if not rules:                          # older schema
         rules = {"drawdown_min": float(data.get("drawdown_trigger", 20.0))}
+    rules["source"] = data.get("source") or ""
     out = []
     for n in data.get("names", []):
         try:
@@ -629,8 +630,10 @@ def render_watchlist(img: Image.Image, d: ImageDraw.ImageDraw,
     d.ellipse([px, py + 2, px + 5, py + 7], fill=(56, 189, 248))
     draw_tracked(d, (px + 11, py - 1), "WATCHLIST", f_label, (190, 200, 220),
                  tracking=2.0)
-    tag = (f"P/E<{pe_max:.0f} · {sum(1 for r in rows if r.get('zone'))} in zone"
-           if pe_max else "bottoming")
+    tag = (f"basing now · {len(rows)}"
+           if rules.get("source") == "zone"
+           else (f"P/E<{pe_max:.0f} · {sum(1 for r in rows if r.get('zone'))} in zone"
+                 if pe_max else "bottoming"))
     d.text((x1 - 20 - d.textlength(tag, font=f_small), py), tag,
            font=f_small, fill=(190, 160, 255) if any(r.get("zone") for r in rows)
            else (150, 162, 184))
@@ -1154,12 +1157,12 @@ def refresh_watchlist_light(max_age: int = 24 * 3600,
 
 
 def refresh_zone_scan(max_age: int = 20 * 3600, retry_after: int = 4 * 3600) -> None:
-    """Scan the whole universe for names in the basing zone, once a day.
+    """Rebuild the whole watchlist from the universe zone scan, once a day.
 
-    Prices only, one batched download: ~35 seconds for 1,644 names, so this can
-    run daily without touching the per-name endpoints that get rate-limited.
+    zone_watchlist.py does both halves: one batched price download for all
+    1,644 names, then fundamentals for only the handful that are basing.
     """
-    refresh_screen(ZONE_WATCH, ROOT / "zone_scan.py", ZONE_STAMP,
+    refresh_screen(WATCHLIST, ROOT / "zone_watchlist.py", ZONE_STAMP,
                    max_age=max_age, retry_after=retry_after)
 
 
@@ -1176,7 +1179,6 @@ def update(apply: bool, force: bool, bg_path: Path | None = None, corner: str = 
     refresh_alerts()
     refresh_crypto()
     refresh_etfs()
-    refresh_watchlist_light()
     refresh_zone_scan()
     state = read_state()
     if toggle:

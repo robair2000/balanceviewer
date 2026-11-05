@@ -7,99 +7,110 @@
    "price": 70.11,
    "dd": -54.4,
    "from_low": 1.0,
+   "r30": 0.0,
+   "from_30d_low": 0.0,
    "rsi": 39.4,
-   "above_ma50": -8.3,
-   "new": true
+   "new": false
   },
   {
    "ticker": "R3NK.DE",
    "price": 34.5,
    "dd": -48.2,
    "from_low": 1.8,
+   "r30": 0.0,
+   "from_30d_low": 0.0,
    "rsi": 35.8,
-   "above_ma50": -11.8,
-   "new": true
+   "new": false
   },
   {
    "ticker": "SEIT.L",
    "price": 32.1,
    "dd": -49.0,
    "from_low": 3.4,
+   "r30": 0.0,
+   "from_30d_low": 0.0,
    "rsi": 42.7,
-   "above_ma50": -5.9,
-   "new": true
+   "new": false
   },
   {
    "ticker": "APTV",
    "price": 43.26,
    "dd": -51.2,
    "from_low": 4.6,
+   "r30": 0.0,
+   "from_30d_low": 0.0,
    "rsi": 46.3,
-   "above_ma50": -2.5,
-   "new": true
+   "new": false
   },
   {
    "ticker": "ALB",
    "price": 94.97,
    "dd": -55.7,
    "from_low": 5.3,
+   "r30": 0.0,
+   "from_30d_low": 0.0,
    "rsi": 42.6,
-   "above_ma50": -12.8,
-   "new": true
+   "new": false
   },
   {
    "ticker": "BDC",
    "price": 105.15,
    "dd": -30.2,
    "from_low": 5.7,
+   "r30": 0.0,
+   "from_30d_low": 0.0,
    "rsi": 45.1,
-   "above_ma50": -5.0,
-   "new": true
+   "new": false
   },
   {
    "ticker": "VNA.DE",
    "price": 17.09,
    "dd": -36.9,
    "from_low": 7.0,
+   "r30": 0.0,
+   "from_30d_low": 0.0,
    "rsi": 56.0,
-   "above_ma50": -1.3,
-   "new": true
+   "new": false
   },
   {
    "ticker": "ZEAL.CO",
    "price": 241.2,
    "dd": -55.8,
    "from_low": 8.7,
+   "r30": 0.0,
+   "from_30d_low": 0.0,
    "rsi": 49.9,
-   "above_ma50": -7.3,
-   "new": true
+   "new": false
   },
   {
    "ticker": "CSG.AS",
-   "price": 13.688,
+   "price": 13.69,
    "dd": -58.5,
    "from_low": 10.8,
+   "r30": 0.0,
+   "from_30d_low": 0.0,
    "rsi": 40.2,
-   "above_ma50": -9.7,
-   "new": true
+   "new": false
   },
   {
    "ticker": "CDE",
    "price": 14.58,
    "dd": -46.2,
    "from_low": 11.3,
+   "r30": 0.0,
+   "from_30d_low": 0.0,
    "rsi": 43.6,
-   "above_ma50": -17.6,
-   "new": true
+   "new": false
   },
   {
    "ticker": "AA",
    "price": 40.58,
    "dd": -51.3,
    "from_low": 14.4,
+   "r30": 0.0,
+   "from_30d_low": 0.0,
    "rsi": 46.8,
-   "above_ma50": -7.6,
-   "new": true
+   "new": false
   }
  ]
 }

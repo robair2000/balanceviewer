@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-05T09:33+00:00",
+ "generated": "2026-11-05T10:33+00:00",
  "alerts": [
   {
    "ticker": "BSL.DE",
@@ -32,6 +32,13 @@
   {
    "ticker": "R3NK.DE",
    "date": "2026-11-05",
+   "kind": "CONTRACT",
+   "source": "EQS",
+   "text": "Q3 \u00fcbertrifft bei Auftragseingang und Marge; Q4 muss liefern; KAUFEN"
+  },
+  {
+   "ticker": "R3NK.DE",
+   "date": "2026-11-05",
    "kind": "UPGRADE",
    "source": "EQS",
    "text": "JEFFERIES stuft Renk auf &#39;Buy&#39;"
@@ -41,14 +48,14 @@
    "date": "2026-11-05",
    "kind": "CONTRACT",
    "source": "EQS",
-   "text": "9M 2026: RENK&#39;s order intake climbs by more than 30% with further above-average increase in adjusted EBIT; operating"
+   "text": "9M 2026: RENK steigert Auftragseingang um mehr als 30 % bei erneut \u00fcberproportionalem Anstieg des bereinigten EBIT - ope"
   },
   {
    "ticker": "R3NK.DE",
    "date": "2026-11-05",
    "kind": "CONTRACT",
    "source": "EQS",
-   "text": "9M 2026: RENK steigert Auftragseingang um mehr als 30 % bei erneut \u00fcberproportionalem Anstieg des bereinigten EBIT - ope"
+   "text": "9M 2026: RENK&#39;s order intake climbs by more than 30% with further above-average increase in adjusted EBIT; operating"
   },
   {
    "ticker": "R3NK.DE",
@@ -90,34 +97,6 @@
    "date": "2026-11-05",
    "kind": "CONTRACT",
    "source": "news",
-   "text": "Harry Kane signs new Bayern Munich contract until 2029 - BBC"
-  },
-  {
-   "ticker": "NYT",
-   "date": "2026-11-05",
-   "kind": "CONTRACT",
-   "source": "news",
-   "text": "Harry Kane signs new Bayern Munich contract: 'I want to win many more titles' - ESPN"
-  },
-  {
-   "ticker": "NYT",
-   "date": "2026-11-05",
-   "kind": "CONTRACT",
-   "source": "news",
-   "text": "Harry Kane signs new Bayern Munich deal to become highest-paid player in Europe - The Athletic - The New York Times"
-  },
-  {
-   "ticker": "NYT",
-   "date": "2026-11-05",
-   "kind": "CONTRACT",
-   "source": "news",
-   "text": "Voters reject Trump\u2019s GOP as Democrats rack up wins - NBC News"
-  },
-  {
-   "ticker": "NYT",
-   "date": "2026-11-05",
-   "kind": "CONTRACT",
-   "source": "news",
    "text": "New Jersey Powerball Player Wins $847 Million Jackpot\u2014But They'll Take Home A Much Smaller Amount - Forbes"
   },
   {
@@ -125,14 +104,14 @@
    "date": "2026-11-05",
    "kind": "CONTRACT",
    "source": "news",
-   "text": "New Jersey lottery player wins $847 million Powerball Jackpot - Bergen Record"
+   "text": "New Jersey ticket wins $847M Powerball jackpot, ninth-largest in game history - ABC7 New York"
   },
   {
    "ticker": "NYT",
    "date": "2026-11-05",
    "kind": "CONTRACT",
    "source": "news",
-   "text": "\ud83d\udea8 Official: Harry Kane signs new Bayern deal on staggering wages! - Yahoo Sports"
+   "text": "Harry Kane signs new Bayern Munich contract: 'I want to win many more titles' - ESPN"
   },
   {
    "ticker": "TEM",
@@ -147,6 +126,13 @@
    "kind": "EARNINGS",
    "source": "SEC 8-K",
    "text": "8-K 2.02,9.01"
+  },
+  {
+   "ticker": "NYT",
+   "date": "2026-11-04",
+   "kind": "CONTRACT",
+   "source": "news",
+   "text": "Markets cheer Democratic win, betting divided Washington means fewer policy shocks - Reuters"
   },
   {
    "ticker": "NYT",
@@ -177,6 +163,13 @@
    "text": "Corcept Therapeutics Inc (CORT) (Q3 2026) Earnings Call Highligh - GuruFocus"
   },
   {
+   "ticker": "TEM",
+   "date": "2026-11-03",
+   "kind": "UPGRADE",
+   "source": "news",
+   "text": "Jefferies upgrades Tempus AI stock rating to hold, raises price target to $70 - Investing.com"
+  },
+  {
    "ticker": "CORT",
    "date": "2026-11-03",
    "kind": "EARNINGS",
@@ -203,13 +196,6 @@
    "kind": "EARNINGS",
    "source": "news",
    "text": "Corcept Therapeutics (CORT) Q3 Earnings and Revenues Surpass Estimates - Yahoo Finance UK"
-  },
-  {
-   "ticker": "CORT",
-   "date": "2026-11-03",
-   "kind": "EARNINGS",
-   "source": "news",
-   "text": "Corcept Therapeutics Incorporated Reports Earnings Results for the Third Quarter and Nine Months Ended September 30, 202"
   },
   {
    "ticker": "TEM",
@@ -280,6 +266,20 @@
    "kind": "UPGRADE",
    "source": "news",
    "text": "Basler AG : Jefferies reaffirms its Buy rating - www.marketscreener.com"
+  },
+  {
+   "ticker": "TER",
+   "date": "2026-10-29",
+   "kind": "EARNINGS",
+   "source": "news",
+   "text": "Teradyne Q3 Earnings Call Highlights AI Demand and 2027 Growth Plans - Yahoo Finance"
+  },
+  {
+   "ticker": "TER",
+   "date": "2026-10-28",
+   "kind": "EARNINGS",
+   "source": "SEC 8-K",
+   "text": "8-K 2.02,9.01"
   }
  ]
 }

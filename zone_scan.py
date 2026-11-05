@@ -1,21 +1,26 @@
-"""Daily zone scan across the whole universe.
+"""Zone scan across the whole universe (prices only).
 
-Prices only: one batched download for every name in universe.txt, then the
-basing rule applied to each. No .info / .financials calls, which is what makes
-the full fundamental scan too heavy to run daily.
+One batched download for every name in universe.txt, then the basing rule
+applied to each. No .info / .financials calls - that is what makes the full
+fundamental scan too heavy to run daily.
 
-    python zone_scan.py            # all names
+    python zone_scan.py                # all names, writes zone_watch.json
     python zone_scan.py --limit 200
 
-Writes zone_watch.json:
-  {"generated": date, "count": n, "zone": [...], "new": [...]}
+The rule, all six at once:
+    deep        >= 30% below the 52-week high
+    near floor  within 20% of the 52-week low
+    not spiking RSI(14) between 28 and 58
+    quiet       30-day vol below 85% of its own 1-year vol
+    flat        within 6% of the 20-day average
+    no breakout close still below the 50-day average
 """
 from __future__ import annotations
 
 import argparse
 import json
 import sys
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 from pathlib import Path
 
 import numpy as np
@@ -39,26 +44,21 @@ def load_universe() -> list[str]:
                 if l.strip() and not l.lstrip().startswith("#")]
 
 
-def main() -> int:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--limit", type=int)
-    args = ap.parse_args()
-
+def scan_universe(tickers: list[str] | None = None) -> list[dict]:
+    """Return the names currently basing in the zone (prices only)."""
     import yfinance as yf
 
-    tickers = load_universe()
-    if args.limit:
-        tickers = tickers[:args.limit]
+    tickers = tickers or load_universe()
     started = datetime.now()
     print(f"downloading {len(tickers)} names...", flush=True)
-
     data = yf.download(tickers, period="1y", interval="1d", auto_adjust=True,
                        progress=False, threads=True, group_by="column")["Close"]
     if isinstance(data, pd.Series):
         data = data.to_frame(tickers[0])
     data = data.dropna(axis=1, thresh=int(len(data) * 0.6))
-    print(f"got {data.shape[1]} series, {len(data)} bars, "
-          f"{(datetime.now() - started).seconds}s", flush=True)
+    globals()["LAST_COVERAGE"] = data.shape[1] / max(1, len(tickers))
+    print(f"got {data.shape[1]}/{len(tickers)} series ({data.shape[1] / max(1, len(tickers)):.0%}), "
+          f"{len(data)} bars, {(datetime.now() - started).seconds}s", flush=True)
 
     rows = []
     for sym in data.columns:
@@ -75,17 +75,34 @@ def main() -> int:
         ma50 = float(s.tail(50).mean())
         v30 = float(r.tail(30).std())
         v1y = float(r.std())
-        zone = bool(dd <= -0.30 and from_low <= 0.20 and 28 <= rsi <= 58
-                    and v1y == v1y and v30 < 0.85 * v1y
-                    and abs(close / ma20 - 1) <= 0.06 and close < ma50)
-        if zone:
-            rows.append({"ticker": sym, "price": round(close, 3),
-                         "dd": round(dd * 100, 1),
-                         "from_low": round(from_low * 100, 1),
-                         "rsi": round(rsi, 1),
-                         "above_ma50": round((close / ma50 - 1) * 100, 1)})
+        r30 = close / float(s.iloc[-31]) - 1 if len(s) > 31 else 0.0
+        from_30d_low = close / float(s.tail(30).min()) - 1
+        if not (dd <= -0.30 and from_low <= 0.20 and 28 <= rsi <= 58
+                and v1y == v1y and v30 < 0.85 * v1y
+                and abs(close / ma20 - 1) <= 0.06 and close < ma50):
+            continue
+        rows.append({"ticker": sym, "price": round(close, 3),
+                     "dd": round(dd * 100, 1),
+                     "from_low": round(from_low * 100, 1),
+                     "r30": round(r30 * 100, 1),
+                     "from_30d_low": round(from_30d_low * 100, 1),
+                     "rsi": round(rsi, 1),
+                     "above_ma50": round((close / ma50 - 1) * 100, 1)})
 
     rows.sort(key=lambda r: r["from_low"])
+    return rows
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--limit", type=int)
+    args = ap.parse_args()
+
+    tickers = load_universe()
+    if args.limit:
+        tickers = tickers[:args.limit]
+    rows = scan_universe(tickers)
+
     prev: set[str] = set()
     try:
         prev = set(json.loads(OUT.read_text(encoding="utf-8")).get("zone") or [])
